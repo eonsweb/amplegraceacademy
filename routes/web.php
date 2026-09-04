@@ -7,7 +7,11 @@ Route::view('/', 'pages.auth.login')
     ->middleware('guest')
     ->name('home');
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::livewire('password/change-required', 'pages::auth.change-required-password')
+    ->middleware('auth')
+    ->name('password.change-required');
+
+Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
     Route::view('dashboard', 'dashboard')
         ->middleware('permission:'.Permissions::DASHBOARD_VIEW)
         ->name('dashboard');

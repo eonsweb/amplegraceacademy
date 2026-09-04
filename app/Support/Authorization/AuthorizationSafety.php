@@ -73,6 +73,45 @@ final class AuthorizationSafety
         }
     }
 
+    public function ensureUserMayBeDeactivated(User $actor, User $subject): void
+    {
+        if ($actor->is($subject)) {
+            throw ValidationException::withMessages([
+                'status' => 'You cannot deactivate your own account.',
+            ]);
+        }
+
+        if ($subject->is_active && $this->userHasCriticalAccess($subject) && ! $this->authorizationManagerExistsExcluding([$subject->getKey()])) {
+            throw ValidationException::withMessages([
+                'status' => 'At least one active user must retain complete authorization management access.',
+            ]);
+        }
+    }
+
+    public function ensureUserMayBeDeleted(User $actor, User $subject): void
+    {
+        if ($actor->is($subject)) {
+            throw ValidationException::withMessages([
+                'user' => 'You cannot delete your own account.',
+            ]);
+        }
+
+        if ($subject->is_active) {
+            throw ValidationException::withMessages([
+                'user' => 'Deactivate this account before deleting it.',
+            ]);
+        }
+    }
+
+    public function ensureUserMayHavePasswordReset(User $actor, User $subject): void
+    {
+        if ($actor->is($subject)) {
+            throw ValidationException::withMessages([
+                'user' => 'You cannot reset your own password from user management.',
+            ]);
+        }
+    }
+
     /**
      * @param  list<string>  $roleNames
      * @param  list<string>  $directPermissionNames
@@ -146,6 +185,7 @@ final class AuthorizationSafety
     {
         return User::query()
             ->whereKeyNot($excludedUserIds)
+            ->where('is_active', true)
             ->where(function (Builder $query): void {
                 foreach (Permissions::critical() as $permission) {
                     $query->where(function (Builder $permissionQuery) use ($permission): void {
@@ -156,5 +196,11 @@ final class AuthorizationSafety
                 }
             })
             ->exists();
+    }
+
+    private function userHasCriticalAccess(User $user): bool
+    {
+        return collect(Permissions::critical())
+            ->every(fn (string $permission): bool => $user->can($permission));
     }
 }

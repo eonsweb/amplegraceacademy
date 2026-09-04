@@ -88,6 +88,12 @@ final class Permissions
 
     public const USERS_DELETE = 'users.delete';
 
+    public const USERS_ASSIGN_ROLE = 'users.assign-role';
+
+    public const USERS_RESET_PASSWORD = 'users.reset-password';
+
+    public const USERS_CHANGE_STATUS = 'users.change-status';
+
     public const ROLES_VIEW = 'roles.view';
 
     public const ROLES_CREATE = 'roles.create';
@@ -124,7 +130,7 @@ final class Permissions
             'Payments' => [self::PAYMENTS_VIEW => 'View payments', self::PAYMENTS_RECORD => 'Record payments'],
             'Expenses' => [self::EXPENSES_VIEW => 'View expenses', self::EXPENSES_CREATE => 'Create expenses', self::EXPENSES_UPDATE => 'Update expenses', self::EXPENSES_DELETE => 'Delete expenses'],
             'Reports' => [self::REPORTS_VIEW => 'View reports'],
-            'Users' => [self::USERS_VIEW => 'View users', self::USERS_CREATE => 'Create users', self::USERS_UPDATE => 'Update users', self::USERS_DELETE => 'Delete users'],
+            'Users' => [self::USERS_VIEW => 'View users', self::USERS_CREATE => 'Create users', self::USERS_UPDATE => 'Update users', self::USERS_DELETE => 'Delete users', self::USERS_ASSIGN_ROLE => 'Assign user roles', self::USERS_RESET_PASSWORD => 'Reset user passwords', self::USERS_CHANGE_STATUS => 'Change user status'],
             'Roles' => [self::ROLES_VIEW => 'View roles', self::ROLES_CREATE => 'Create roles', self::ROLES_UPDATE => 'Update roles', self::ROLES_DELETE => 'Delete roles'],
             'Permissions' => [self::PERMISSIONS_VIEW => 'View permissions', self::PERMISSIONS_ASSIGN => 'Assign permissions'],
             'Settings' => [self::SETTINGS_VIEW => 'View system settings', self::SETTINGS_UPDATE => 'Update system settings'],
@@ -147,11 +153,25 @@ final class Permissions
     /** @return list<string> */
     public static function critical(): array
     {
-        return [self::USERS_UPDATE, self::ROLES_UPDATE, self::PERMISSIONS_ASSIGN];
+        return [self::USERS_VIEW, self::USERS_UPDATE, self::USERS_ASSIGN_ROLE, self::USERS_CHANGE_STATUS, self::ROLES_UPDATE, self::PERMISSIONS_ASSIGN];
+    }
+
+    /** @return list<string> */
+    public static function userManagement(): array
+    {
+        return [
+            self::USERS_VIEW,
+            self::USERS_CREATE,
+            self::USERS_UPDATE,
+            self::USERS_DELETE,
+            self::USERS_ASSIGN_ROLE,
+            self::USERS_RESET_PASSWORD,
+            self::USERS_CHANGE_STATUS,
+        ];
     }
 
     public static function isPowerful(string $permission): bool
     {
-        return in_array($permission, [self::PERMISSIONS_ASSIGN, self::ROLES_UPDATE, self::SETTINGS_UPDATE, self::USERS_DELETE], true);
+        return in_array($permission, [self::PERMISSIONS_ASSIGN, self::ROLES_UPDATE, self::SETTINGS_UPDATE, self::USERS_DELETE, self::USERS_ASSIGN_ROLE], true);
     }
 }

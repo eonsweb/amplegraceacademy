@@ -42,11 +42,15 @@ test('authorization seeders are idempotent and assign the initial role mappings'
     seedAuthorization();
 
     $admin = Role::findByName(Roles::ADMIN);
+    $proprietor = Role::findByName(Roles::PROPRIETOR);
+    $headmaster = Role::findByName(Roles::HEADMASTER);
     $teacher = Role::findByName(Roles::TEACHER);
 
     expect(Permission::query()->count())->toBe(count(Permissions::all()))
         ->and(Role::query()->count())->toBe(count(Roles::initial()))
         ->and($admin->permissions()->count())->toBe(count(Permissions::all()))
+        ->and($proprietor->hasAllPermissions(Permissions::userManagement()))->toBeTrue()
+        ->and($headmaster->hasAllPermissions(Permissions::userManagement()))->toBeTrue()
         ->and($teacher->hasPermissionTo(Permissions::ASSESSMENTS_RECORD_SCORES))->toBeTrue()
         ->and($teacher->hasPermissionTo(Permissions::FEES_VIEW))->toBeFalse();
 });

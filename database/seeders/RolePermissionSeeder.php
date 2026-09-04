@@ -21,6 +21,7 @@ class RolePermissionSeeder extends Seeder
                 Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW, Permissions::ATTENDANCE_VIEW,
                 Permissions::ASSESSMENTS_VIEW, Permissions::FEES_VIEW, Permissions::PAYMENTS_VIEW,
                 Permissions::EXPENSES_VIEW, Permissions::REPORTS_VIEW,
+                ...Permissions::userManagement(),
             ],
             Roles::HEADMASTER => [
                 Permissions::DASHBOARD_VIEW,
@@ -31,6 +32,7 @@ class RolePermissionSeeder extends Seeder
                 Permissions::ATTENDANCE_VIEW, Permissions::ATTENDANCE_RECORD, Permissions::ATTENDANCE_UPDATE,
                 Permissions::ASSESSMENTS_VIEW, Permissions::ASSESSMENTS_CREATE, Permissions::ASSESSMENTS_UPDATE,
                 Permissions::ASSESSMENTS_RECORD_SCORES, Permissions::REPORTS_VIEW,
+                ...Permissions::userManagement(),
             ],
             Roles::TEACHER => [
                 Permissions::DASHBOARD_VIEW, Permissions::STUDENTS_VIEW, Permissions::CLASSES_VIEW,
