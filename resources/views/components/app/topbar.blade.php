@@ -1,8 +1,8 @@
-<header class="sticky top-0 z-30 flex min-h-17 items-center gap-2 border-b border-zinc-200 bg-white px-3 sm:gap-4 sm:px-6 lg:px-7">
+<header class="sticky top-0 z-30 flex min-h-17 items-center gap-2 border-b border-zinc-200 bg-white px-3 dark:border-zinc-800 dark:bg-zinc-900 sm:gap-4 sm:px-6 lg:px-7">
     <button
         type="button"
         x-ref="sidebarToggle"
-        class="grid size-10 shrink-0 place-items-center rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 lg:hidden"
+        class="grid size-10 shrink-0 place-items-center rounded-lg text-zinc-600 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-brand-200 lg:hidden"
         aria-label="Open navigation"
         aria-controls="app-sidebar"
         x-bind:aria-expanded="sidebarOpen"
@@ -19,25 +19,25 @@
             type="search"
             placeholder="Search anything..."
             autocomplete="off"
-            class="h-10 w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 text-sm text-zinc-800 shadow-sm outline-none placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20"
+            class="h-10 w-full rounded-lg border border-zinc-200 bg-white pl-9 pr-3 text-sm text-zinc-800 shadow-sm outline-none placeholder:text-zinc-400 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white dark:placeholder:text-zinc-500"
         >
     </div>
 
     <div class="ml-auto flex shrink-0 items-center gap-1 sm:gap-2">
-        <button type="button" class="relative grid size-10 place-items-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700" aria-label="Notifications, 5 unread">
+        <button type="button" class="relative grid size-10 place-items-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-brand-200" aria-label="Notifications, 5 unread">
             <flux:icon name="bell" class="size-5" />
             <span class="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-brand-700 px-1 text-[9px] font-bold leading-4 text-white" aria-hidden="true">5</span>
         </button>
-        <button type="button" class="relative grid size-10 place-items-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700" aria-label="Messages, 3 unread">
+        <button type="button" class="relative grid size-10 place-items-center rounded-lg text-zinc-700 hover:bg-zinc-100 hover:text-brand-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-700 dark:text-zinc-300 dark:hover:bg-zinc-800 dark:hover:text-brand-200" aria-label="Messages, 3 unread">
             <flux:icon name="envelope" class="size-5" />
             <span class="absolute right-0.5 top-0.5 grid min-w-4 place-items-center rounded-full bg-brand-700 px-1 text-[9px] font-bold leading-4 text-white" aria-hidden="true">3</span>
         </button>
 
-        <span class="mx-1 hidden h-8 w-px bg-zinc-200 sm:block" aria-hidden="true"></span>
+        <span class="mx-1 hidden h-8 w-px bg-zinc-200 dark:bg-zinc-700 sm:block" aria-hidden="true"></span>
 
         <div class="hidden text-right sm:block">
-            <p class="max-w-32 truncate text-sm font-semibold text-zinc-950">{{ auth()->user()->name }}</p>
-            <p class="text-xs text-zinc-500">Super Admin</p>
+            <p class="max-w-32 truncate text-sm font-semibold text-zinc-950 dark:text-white">{{ auth()->user()->name }}</p>
+            <p class="text-xs text-zinc-500 dark:text-zinc-400">Super Admin</p>
         </div>
 
         <flux:dropdown position="bottom" align="end">

@@ -4,6 +4,7 @@ use App\Events\UserManagementChanged;
 use App\Models\User;
 use App\Support\Authorization\AuthorizationSafety;
 use App\Support\Authorization\Permissions;
+use App\Support\Settings\SystemSettings;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -50,9 +51,12 @@ new #[Title('Users')] class extends Component {
 
     public bool $isActive = true;
 
-    public function mount(): void
+    public int $recordsPerPage = 25;
+
+    public function mount(SystemSettings $settings): void
     {
         Gate::authorize(Permissions::USERS_VIEW);
+        $this->recordsPerPage = $settings->recordsPerPage();
     }
 
     public function updatedSearch(): void
@@ -102,7 +106,7 @@ new #[Title('Users')] class extends Component {
             ->when($this->statusFilter === 'inactive', fn (Builder $query): Builder => $query->where('is_active', false))
             ->orderBy('name')
             ->orderBy('id')
-            ->paginate(15);
+            ->paginate($this->recordsPerPage);
     }
 
     /** @return Collection<int, Role> */
@@ -371,6 +375,7 @@ new #[Title('Users')] class extends Component {
 ?>
 
 <section class="grid gap-6">
+    @inject('systemSettings', 'App\Support\Settings\SystemSettings')
     <div class="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
         <div>
             <flux:heading size="xl">Users</flux:heading>
@@ -388,8 +393,8 @@ new #[Title('Users')] class extends Component {
         <flux:callout variant="danger" icon="exclamation-circle" heading="{{ $message }}" />
     @enderror
 
-    <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div class="grid gap-3 border-b border-zinc-200 p-4 md:grid-cols-[minmax(0,1fr)_12rem_10rem_auto]">
+    <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="grid gap-3 border-b border-zinc-200 p-4 dark:border-zinc-800 md:grid-cols-[minmax(0,1fr)_12rem_10rem_auto]">
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Search name, username, or email..." aria-label="Search users" />
 
             <flux:select wire:model.live="roleFilter" aria-label="Filter users by role">
@@ -413,7 +418,7 @@ new #[Title('Users')] class extends Component {
         <div class="overflow-x-auto">
             <table class="w-full min-w-[820px] text-left text-sm">
                 <caption class="sr-only">Application users with roles and account status</caption>
-                <thead class="bg-zinc-50 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                <thead class="bg-zinc-50 text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300">
                     <tr>
                         <th scope="col" class="px-4 py-3">User</th>
                         <th scope="col" class="px-4 py-3">Username</th>
@@ -423,14 +428,14 @@ new #[Title('Users')] class extends Component {
                         <th scope="col" class="px-4 py-3 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-200">
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
                     @forelse ($this->users as $user)
                         <tr wire:key="user-{{ $user->id }}">
                             <td class="px-4 py-3">
-                                <p class="font-semibold text-zinc-900">{{ $user->name }}</p>
+                                <p class="font-semibold text-zinc-900 dark:text-white">{{ $user->name }}</p>
                                 <p class="text-xs text-zinc-500">{{ $user->email }}</p>
                             </td>
-                            <td class="px-4 py-3 text-zinc-600">{{ $user->username }}</td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $user->username }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex flex-wrap gap-1.5">
                                     @forelse ($user->roles as $role)
@@ -449,7 +454,7 @@ new #[Title('Users')] class extends Component {
                                     <span class="mt-1 block text-xs text-amber-700">Password change required</span>
                                 @endif
                             </td>
-                            <td class="whitespace-nowrap px-4 py-3 text-zinc-600">{{ $user->created_at?->format('M j, Y') }}</td>
+                            <td class="whitespace-nowrap px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $systemSettings->formatDate($user->created_at) }}</td>
                             <td class="px-4 py-3 text-right">
                                 <flux:dropdown position="bottom" align="end">
                                     <flux:button size="sm" variant="ghost" icon="ellipsis-horizontal" aria-label="Actions for {{ $user->name }}" />
@@ -483,7 +488,7 @@ new #[Title('Users')] class extends Component {
                     @empty
                         <tr>
                             <td colspan="6" class="px-4 py-12 text-center">
-                                <p class="font-medium text-zinc-700">{{ $search !== '' || $roleFilter !== '' || $statusFilter !== '' ? 'No users match your current search or filters.' : 'No users found.' }}</p>
+                                <p class="font-medium text-zinc-700 dark:text-zinc-200">{{ $search !== '' || $roleFilter !== '' || $statusFilter !== '' ? 'No users match your current search or filters.' : 'No users found.' }}</p>
                             </td>
                         </tr>
                     @endforelse
@@ -492,7 +497,7 @@ new #[Title('Users')] class extends Component {
         </div>
 
         @if ($this->users->hasPages())
-            <div class="border-t border-zinc-200 p-4">{{ $this->users->links() }}</div>
+            <div class="border-t border-zinc-200 p-4 dark:border-zinc-800">{{ $this->users->links() }}</div>
         @endif
     </div>
 
@@ -517,12 +522,12 @@ new #[Title('Users')] class extends Component {
             </div>
 
             <fieldset>
-                <legend class="text-sm font-semibold text-zinc-900">Roles</legend>
+                <legend class="text-sm font-semibold text-zinc-900 dark:text-white">Roles</legend>
                 <p class="mt-1 text-xs text-zinc-500">Choose one or more roles. Roles you are not allowed to grant are disabled.</p>
                 <div class="mt-3 grid gap-2 sm:grid-cols-2">
                     @foreach ($this->roles as $role)
-                        <label wire:key="user-form-role-{{ $role->id }}" class="flex items-center gap-3 rounded-lg border border-zinc-200 p-3 text-sm has-disabled:bg-zinc-50 has-disabled:text-zinc-400">
-                            <input type="checkbox" value="{{ $role->name }}" wire:model="roleNames" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600" @disabled(! $this->canAssignRole($role))>
+                        <label wire:key="user-form-role-{{ $role->id }}" class="flex items-center gap-3 rounded-lg border border-zinc-200 p-3 text-sm has-disabled:bg-zinc-50 has-disabled:text-zinc-400 dark:border-zinc-700 dark:has-disabled:bg-zinc-800">
+                            <input type="checkbox" value="{{ $role->name }}" wire:model="roleNames" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600 dark:border-zinc-600" @disabled(! $this->canAssignRole($role))>
                             <span class="font-medium">{{ $role->name }}</span>
                         </label>
                     @endforeach

@@ -140,7 +140,7 @@ new #[Title('Edit role')] class extends Component {
     </div>
 
     <form wire:submit="save" class="grid gap-6">
-        <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
+        <div class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
             <flux:input wire:model="name" label="Role name" maxlength="100" required :disabled="! auth()->user()->can(Permissions::ROLES_UPDATE) || $this->isInitialRole" />
             @if ($this->isInitialRole)
                 <p class="mt-2 text-xs text-zinc-500">Initial role names are fixed so repeated seeding remains safe.</p>
@@ -156,9 +156,9 @@ new #[Title('Edit role')] class extends Component {
 
         <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
             @foreach ($this->permissionGroups as $module => $permissions)
-                <fieldset wire:key="permission-module-{{ str($module)->slug() }}" class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm">
-                    <div class="flex items-center justify-between gap-3 border-b border-zinc-100 pb-3">
-                        <legend class="font-semibold text-zinc-900">{{ $module }}</legend>
+                <fieldset wire:key="permission-module-{{ str($module)->slug() }}" class="rounded-xl border border-zinc-200 bg-white p-4 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                    <div class="flex items-center justify-between gap-3 border-b border-zinc-100 pb-3 dark:border-zinc-800">
+                        <legend class="font-semibold text-zinc-900 dark:text-white">{{ $module }}</legend>
                         @can(Permissions::PERMISSIONS_ASSIGN)
                             @can(Permissions::ROLES_UPDATE)
                                 <span class="flex gap-2 text-xs">
@@ -171,9 +171,9 @@ new #[Title('Edit role')] class extends Component {
                     <div class="mt-3 grid gap-3">
                         @foreach ($permissions as $permission => $label)
                             <label wire:key="permission-{{ $permission }}" class="flex items-start gap-3 text-sm">
-                                <input type="checkbox" value="{{ $permission }}" wire:model="permissionNames" class="mt-0.5 size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600" @disabled(! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN) || ! auth()->user()->can(Permissions::ROLES_UPDATE))>
+                                <input type="checkbox" value="{{ $permission }}" wire:model="permissionNames" class="mt-0.5 size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600 dark:border-zinc-600" @disabled(! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN) || ! auth()->user()->can(Permissions::ROLES_UPDATE))>
                                 <span class="min-w-0">
-                                    <span class="font-medium text-zinc-800">{{ $label }}</span>
+                                    <span class="font-medium text-zinc-800 dark:text-zinc-200">{{ $label }}</span>
                                     @if (Permissions::isPowerful($permission))
                                         <span class="ml-1 rounded bg-amber-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-amber-700">Sensitive</span>
                                     @endif

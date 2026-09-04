@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    @inject('systemSettings', 'App\Support\Settings\SystemSettings')
     <head>
         @include('partials.head')
     </head>
@@ -8,10 +9,10 @@
             <div class="flex w-full max-w-md flex-col gap-6">
                 <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
                     <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
+                        <x-app-logo-icon context="login" class="size-9 fill-current text-black dark:text-white" />
                     </span>
 
-                    <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                    <span class="sr-only">{{ $systemSettings->schoolName() }}</span>
                 </a>
 
                 <div class="flex flex-col gap-6">

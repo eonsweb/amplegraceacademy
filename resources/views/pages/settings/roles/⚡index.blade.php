@@ -3,6 +3,7 @@
 use App\Events\AuthorizationChanged;
 use App\Support\Authorization\AuthorizationSafety;
 use App\Support\Authorization\Permissions;
+use App\Support\Settings\SystemSettings;
 use App\Support\Authorization\Roles;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Builder;
@@ -26,9 +27,12 @@ new #[Title('Roles & permissions')] class extends Component {
 
     public bool $showCreateRole = false;
 
-    public function mount(): void
+    public int $recordsPerPage = 25;
+
+    public function mount(SystemSettings $settings): void
     {
         abort_unless(Gate::any([Permissions::ROLES_VIEW, Permissions::PERMISSIONS_VIEW]), 403);
+        $this->recordsPerPage = $settings->recordsPerPage();
     }
 
     public function updatedSearch(): void
@@ -45,7 +49,7 @@ new #[Title('Roles & permissions')] class extends Component {
             ->withCount(['users', 'permissions'])
             ->when($this->search !== '', fn (Builder $query): Builder => $query->where('name', 'like', '%'.$this->search.'%'))
             ->orderBy('name')
-            ->paginate(10);
+            ->paginate($this->recordsPerPage);
     }
 
     public function createRole(): void
@@ -107,14 +111,14 @@ new #[Title('Roles & permissions')] class extends Component {
         <flux:callout variant="danger" icon="exclamation-circle" heading="{{ $message }}" />
     @enderror
 
-    <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm">
-        <div class="border-b border-zinc-200 p-4">
+    <div class="overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+        <div class="border-b border-zinc-200 p-4 dark:border-zinc-800">
             <flux:input wire:model.live.debounce.300ms="search" icon="magnifying-glass" placeholder="Search roles..." aria-label="Search roles" />
         </div>
         <div class="overflow-x-auto">
             <table class="w-full min-w-[640px] text-left text-sm">
                 <caption class="sr-only">Application roles with assigned users and permissions</caption>
-                <thead class="bg-zinc-50 text-xs font-semibold uppercase tracking-wide text-zinc-500">
+                <thead class="bg-zinc-50 text-xs font-semibold uppercase tracking-wide text-zinc-500 dark:bg-zinc-800 dark:text-zinc-300">
                     <tr>
                         <th scope="col" class="px-4 py-3">Role</th>
                         <th scope="col" class="px-4 py-3">Users</th>
@@ -122,17 +126,17 @@ new #[Title('Roles & permissions')] class extends Component {
                         <th scope="col" class="px-4 py-3 text-right">Actions</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-zinc-200">
+                <tbody class="divide-y divide-zinc-200 dark:divide-zinc-800">
                     @forelse ($this->roles as $role)
                         <tr wire:key="role-{{ $role->id }}">
                             <td class="px-4 py-3">
-                                <div class="font-semibold text-zinc-900">{{ $role->name }}</div>
+                                <div class="font-semibold text-zinc-900 dark:text-white">{{ $role->name }}</div>
                                 @if ($this->isInitialRole($role))
                                     <span class="text-xs text-zinc-500">Initial school role</span>
                                 @endif
                             </td>
-                            <td class="px-4 py-3 text-zinc-600">{{ $role->users_count }}</td>
-                            <td class="px-4 py-3 text-zinc-600">{{ $role->permissions_count }}</td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $role->users_count }}</td>
+                            <td class="px-4 py-3 text-zinc-600 dark:text-zinc-300">{{ $role->permissions_count }}</td>
                             <td class="px-4 py-3">
                                 <div class="flex justify-end gap-2">
                                     <flux:button size="sm" variant="ghost" :href="route('roles.edit', $role)" wire:navigate>
@@ -153,7 +157,7 @@ new #[Title('Roles & permissions')] class extends Component {
             </table>
         </div>
         @if ($this->roles->hasPages())
-            <div class="border-t border-zinc-200 p-4">{{ $this->roles->links() }}</div>
+            <div class="border-t border-zinc-200 p-4 dark:border-zinc-800">{{ $this->roles->links() }}</div>
         @endif
     </div>
 

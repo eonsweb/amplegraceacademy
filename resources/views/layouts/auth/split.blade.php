@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    @inject('systemSettings', 'App\Support\Settings\SystemSettings')
     <head>
         @include('partials.head')
     </head>
@@ -9,9 +10,9 @@
                 <div class="absolute inset-0 bg-neutral-900"></div>
                 <a href="{{ route('home') }}" class="relative z-20 flex items-center text-lg font-medium" wire:navigate>
                     <span class="flex h-10 w-10 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="me-2 h-7 fill-current text-white" />
+                        <x-app-logo-icon context="login" class="me-2 h-7 fill-current text-white" />
                     </span>
-                    {{ config('app.name', 'Laravel') }}
+                    {{ $systemSettings->schoolName() }}
                 </a>
 
                 @php
@@ -29,10 +30,10 @@
                 <div class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]">
                     <a href="{{ route('home') }}" class="z-20 flex flex-col items-center gap-2 font-medium lg:hidden" wire:navigate>
                         <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                            <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
+                            <x-app-logo-icon context="login" class="size-9 fill-current text-black dark:text-white" />
                         </span>
 
-                        <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                        <span class="sr-only">{{ $systemSettings->schoolName() }}</span>
                     </a>
                     {{ $slot }}
                 </div>

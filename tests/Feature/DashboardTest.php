@@ -18,6 +18,7 @@ test('authorized users can visit the dashboard', function () {
     $response = $this->get(route('dashboard'));
     $response->assertSee([
         'Dashboard',
+        'GH₵4,250,000.00',
         'Fee Collection Overview',
         'Student Attendance Overview',
         'Recent Notices',

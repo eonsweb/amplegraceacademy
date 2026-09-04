@@ -16,6 +16,11 @@ class SchoolSettingSeeder extends Seeder
             'id' => 1,
         ], [
             'school_name' => config('app.name'),
+            'currency_code' => 'GHS',
+            'date_format' => 'DD/MM/YYYY',
+            'time_format' => '12-hour',
+            'timezone' => 'Africa/Accra',
+            'records_per_page' => 25,
         ]);
     }
 }

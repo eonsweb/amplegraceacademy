@@ -35,6 +35,8 @@
         ->all();
 @endphp
 
+@inject('systemSettings', 'App\Support\Settings\SystemSettings')
+
 <aside
     id="app-sidebar"
     class="app-sidebar-surface fixed inset-y-0 left-0 z-50 flex w-72 -translate-x-full flex-col text-white shadow-xl transition-transform duration-200 ease-out lg:translate-x-0 lg:shadow-none motion-reduce:transition-none"
@@ -44,8 +46,8 @@
 >
     <div class="flex h-17 min-h-17 shrink-0 items-center gap-3 border-b border-white/10 px-4">
         <img
-            src="{{ asset('images/branding/ample-grace-logo.png') }}"
-            alt="Ample Grace Academy crest"
+            src="{{ $systemSettings->dashboardLogoUrl() }}"
+            alt="{{ $systemSettings->schoolName() }} crest"
             width="140"
             height="150"
             class="h-12 w-auto shrink-0 object-contain"
@@ -97,6 +99,6 @@
     </nav>
 
     <footer class="border-t border-white/10 px-6 py-5 text-center text-xs text-white/65">
-        &copy; 2025 {{ config('app.name', 'Ample Grace Academy') }}
+        &copy; {{ now()->year }} {{ $systemSettings->schoolName() }}
     </footer>
 </aside>

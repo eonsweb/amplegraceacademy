@@ -172,34 +172,34 @@ new #[Title('Manage user access')] class extends Component {
     @enderror
 
     <form wire:submit="save" class="grid gap-6">
-        <fieldset class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-            <legend class="px-1 text-base font-semibold text-zinc-900">Assigned roles</legend>
+        <fieldset class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+            <legend class="px-1 text-base font-semibold text-zinc-900 dark:text-white">Assigned roles</legend>
             <p class="mb-4 text-sm text-zinc-500">Users inherit all permissions from every selected role.</p>
             <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 @foreach ($this->roles as $role)
-                    <label wire:key="role-choice-{{ $role->id }}" class="flex items-center gap-3 rounded-lg border border-zinc-200 p-3 text-sm">
-                        <input type="checkbox" value="{{ $role->name }}" wire:model.live="roleNames" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600" @disabled(auth()->user()->is($user) || ! auth()->user()->can(Permissions::USERS_UPDATE) || ! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN))>
-                        <span class="font-medium text-zinc-800">{{ $role->name }}</span>
+                    <label wire:key="role-choice-{{ $role->id }}" class="flex items-center gap-3 rounded-lg border border-zinc-200 p-3 text-sm dark:border-zinc-700">
+                        <input type="checkbox" value="{{ $role->name }}" wire:model.live="roleNames" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600 dark:border-zinc-600" @disabled(auth()->user()->is($user) || ! auth()->user()->can(Permissions::USERS_UPDATE) || ! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN))>
+                        <span class="font-medium text-zinc-800 dark:text-zinc-200">{{ $role->name }}</span>
                     </label>
                 @endforeach
             </div>
         </fieldset>
 
         <div class="grid gap-4 xl:grid-cols-2">
-            <section class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm">
-                <h2 class="font-semibold text-zinc-900">Direct permissions</h2>
+            <section class="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
+                <h2 class="font-semibold text-zinc-900 dark:text-white">Direct permissions</h2>
                 <p class="mt-1 text-sm text-zinc-500">Use only for exceptions. Permissions already inherited from roles are marked and not duplicated.</p>
                 <div class="mt-5 grid gap-5">
                     @foreach ($this->permissionGroups as $module => $permissions)
                         <fieldset wire:key="direct-module-{{ str($module)->slug() }}">
-                            <legend class="text-sm font-semibold text-zinc-800">{{ $module }}</legend>
+                            <legend class="text-sm font-semibold text-zinc-800 dark:text-zinc-200">{{ $module }}</legend>
                             <div class="mt-2 grid gap-2">
                                 @foreach ($permissions as $permission => $label)
                                     @php($inherited = $this->inheritedPermissionNames->contains($permission))
                                     <label wire:key="direct-{{ $permission }}" class="flex items-start gap-2 text-sm">
-                                        <input type="checkbox" value="{{ $permission }}" wire:model="directPermissionNames" class="mt-0.5 size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600" @disabled($inherited || auth()->user()->is($user) || ! auth()->user()->can(Permissions::USERS_UPDATE) || ! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN))>
+                                        <input type="checkbox" value="{{ $permission }}" wire:model="directPermissionNames" class="mt-0.5 size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600 dark:border-zinc-600" @disabled($inherited || auth()->user()->is($user) || ! auth()->user()->can(Permissions::USERS_UPDATE) || ! auth()->user()->can(Permissions::PERMISSIONS_ASSIGN))>
                                         <span>
-                                            <span class="text-zinc-700">{{ $label }}</span>
+                                            <span class="text-zinc-700 dark:text-zinc-300">{{ $label }}</span>
                                             @if ($inherited)
                                                 <span class="ml-1 rounded bg-blue-50 px-1.5 py-0.5 text-[10px] font-semibold uppercase text-blue-700">Inherited</span>
                                             @elseif (Permissions::isPowerful($permission))
@@ -220,7 +220,7 @@ new #[Title('Manage user access')] class extends Component {
                     <p class="mt-1 text-sm text-blue-700">Provided by the selected roles.</p>
                     <div class="mt-4 flex flex-wrap gap-1.5">
                         @forelse ($this->inheritedPermissionNames as $permission)
-                            <span wire:key="inherited-{{ $permission }}" class="rounded-md border border-blue-200 bg-white px-2 py-1 text-xs text-blue-800">{{ $permission }}</span>
+                            <span wire:key="inherited-{{ $permission }}" class="rounded-md border border-blue-200 bg-white px-2 py-1 text-xs text-blue-800 dark:border-blue-800 dark:bg-zinc-900 dark:text-blue-300">{{ $permission }}</span>
                         @empty
                             <span class="text-sm text-blue-700">No inherited permissions.</span>
                         @endforelse
@@ -232,7 +232,7 @@ new #[Title('Manage user access')] class extends Component {
                     <p class="mt-1 text-sm text-emerald-700">Combined access from roles and direct grants.</p>
                     <div class="mt-4 flex flex-wrap gap-1.5">
                         @forelse ($this->effectivePermissionNames as $permission)
-                            <span wire:key="effective-{{ $permission }}" class="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-800">{{ $permission }}</span>
+                            <span wire:key="effective-{{ $permission }}" class="rounded-md border border-emerald-200 bg-white px-2 py-1 text-xs text-emerald-800 dark:border-emerald-800 dark:bg-zinc-900 dark:text-emerald-300">{{ $permission }}</span>
                         @empty
                             <span class="text-sm text-emerald-700">No effective permissions.</span>
                         @endforelse

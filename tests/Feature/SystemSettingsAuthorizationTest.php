@@ -6,6 +6,14 @@ use App\Support\Authorization\Permissions;
 use Livewire\Livewire;
 use Spatie\Permission\Models\Permission;
 
+test('a user without settings permission receives a forbidden response', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)
+        ->get(route('settings.system'))
+        ->assertForbidden();
+});
+
 test('a user with view permission can view system settings', function () {
     Permission::findOrCreate(Permissions::SETTINGS_VIEW);
     $user = User::factory()->create();

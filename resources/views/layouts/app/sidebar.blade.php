@@ -4,11 +4,11 @@
         @include('partials.head')
     </head>
     <body
-        class="min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-800 antialiased"
+        class="min-h-screen overflow-x-hidden bg-zinc-50 text-zinc-800 antialiased dark:bg-zinc-950 dark:text-zinc-100"
         x-data="{ sidebarOpen: false }"
         x-on:keydown.escape.window="if (sidebarOpen) { sidebarOpen = false; $nextTick(() => $refs.sidebarToggle?.focus()) }"
     >
-        <a href="#main-content" class="fixed left-3 top-3 z-[60] -translate-y-20 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-brand-800 shadow-lg focus:translate-y-0 focus:outline-2 focus:outline-offset-2 focus:outline-brand-700">
+        <a href="#main-content" class="fixed left-3 top-3 z-[60] -translate-y-20 rounded-lg bg-white px-4 py-2 text-sm font-semibold text-brand-800 shadow-lg focus:translate-y-0 focus:outline-2 focus:outline-offset-2 focus:outline-brand-700 dark:bg-zinc-800 dark:text-brand-200">
             Skip to main content
         </a>
 
