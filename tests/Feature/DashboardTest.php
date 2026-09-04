@@ -12,5 +12,12 @@ test('authenticated users can visit the dashboard', function () {
     $this->actingAs($user);
 
     $response = $this->get(route('dashboard'));
-    $response->assertOk();
+    $response->assertSee([
+        'Dashboard',
+        'Fee Collection Overview',
+        'Student Attendance Overview',
+        'Recent Notices',
+        'Recent Payments',
+        'Upcoming Events',
+    ]);
 });
