@@ -43,17 +43,16 @@ test('each academic page renders the shared navigation and selected content', fu
             'Academic Years',
             'Terms',
             'Class Levels',
-            'Class Sections',
             'Subjects',
             'Class Subjects',
             $heading,
         ])
+        ->assertDontSee('Class Sections')
         ->assertSee('data-current', false);
 })->with([
     'academic years' => ['academic.years.index', 'Configured academic years'],
-    'terms' => ['academic.terms.index', 'No terms to display'],
+    'terms' => ['academic.terms.index', 'Configured Terms'],
     'class levels' => ['academic.class-levels.index', 'Ordered class levels'],
-    'class sections' => ['academic.class-sections.index', 'No class sections to display'],
     'subjects' => ['academic.subjects.index', 'Subject name'],
     'class subjects' => ['academic.class-subjects.index', 'Subject assignments'],
 ]);
@@ -80,4 +79,14 @@ test('the main sidebar keeps academic setup active throughout the module', funct
         ->get(route('academic.terms.index'))
         ->assertSee('Academic Setup')
         ->assertSee('bg-white/15 text-white shadow-sm', false);
+});
+
+test('the removed class sections page is not routed', function () {
+    Permission::findOrCreate(Permissions::CLASSES_VIEW);
+    $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::CLASSES_VIEW);
+
+    $this->actingAs($user)
+        ->get('/academic/class-sections')
+        ->assertNotFound();
 });

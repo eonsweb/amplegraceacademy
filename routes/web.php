@@ -46,9 +46,6 @@ Route::middleware(['auth', 'verified', 'password.changed'])
         Route::livewire('class-levels', 'pages::academic.class-levels.index')
             ->middleware('permission:'.Permissions::CLASSES_VIEW)
             ->name('class-levels.index');
-        Route::livewire('class-sections', 'pages::academic.class-sections.index')
-            ->middleware('permission:'.Permissions::CLASSES_VIEW)
-            ->name('class-sections.index');
         Route::livewire('subjects', 'pages::academic.subjects.index')
             ->middleware('permission:'.Permissions::SUBJECTS_VIEW)
             ->name('subjects.index');

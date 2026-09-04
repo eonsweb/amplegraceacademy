@@ -14,7 +14,6 @@
                     <flux:navlist.item :href="route('academic.years.index')" :current="request()->routeIs('academic.years.*')" wire:navigate>{{ __('Academic Years') }}</flux:navlist.item>
                     <flux:navlist.item :href="route('academic.terms.index')" :current="request()->routeIs('academic.terms.*')" wire:navigate>{{ __('Terms') }}</flux:navlist.item>
                     <flux:navlist.item :href="route('academic.class-levels.index')" :current="request()->routeIs('academic.class-levels.*')" wire:navigate>{{ __('Class Levels') }}</flux:navlist.item>
-                    <flux:navlist.item :href="route('academic.class-sections.index')" :current="request()->routeIs('academic.class-sections.*')" wire:navigate>{{ __('Class Sections') }}</flux:navlist.item>
                 @endcan
                 @can(\App\Support\Authorization\Permissions::SUBJECTS_VIEW)
                     <flux:navlist.item :href="route('academic.subjects.index')" :current="request()->routeIs('academic.subjects.*')" wire:navigate>{{ __('Subjects') }}</flux:navlist.item>
