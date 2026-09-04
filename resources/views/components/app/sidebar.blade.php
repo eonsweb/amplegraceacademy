@@ -4,6 +4,7 @@
     $user = auth()->user();
     $navigationGroups = [
         'Academic' => [
+            ['label' => 'Academic Setup', 'icon' => 'wrench-screwdriver', 'href' => route('academic.index'), 'permission' => [Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW], 'active' => request()->routeIs('academic.*')],
             ['label' => 'Students', 'icon' => 'user-group', 'permission' => Permissions::STUDENTS_VIEW],
             ['label' => 'Teachers', 'icon' => 'academic-cap', 'permission' => Permissions::STAFF_VIEW],
             ['label' => 'Classes', 'icon' => 'book-open', 'permission' => Permissions::CLASSES_VIEW],
