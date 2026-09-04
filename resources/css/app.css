@@ -38,6 +38,10 @@
 
 @layer base {
 
+    [x-cloak] {
+        display: none !important;
+    }
+
     *,
     ::after,
     ::before,

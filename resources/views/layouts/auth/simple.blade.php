@@ -1,22 +1,24 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-white antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-        <div class="bg-background flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div class="flex w-full max-w-sm flex-col gap-2">
-                <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                    <span class="flex h-9 w-9 mb-1 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
-                    </span>
-                    <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+    <body class="min-h-screen bg-zinc-50 text-zinc-950 antialiased">
+        <main class="flex min-h-svh items-center justify-center px-4 py-8 sm:px-6">
+            <div class="w-full max-w-md rounded-2xl border border-zinc-200 bg-white px-6 py-9 shadow-[0_22px_55px_-30px_rgba(0,0,0,0.35)] sm:px-10 sm:py-11">
+                <a href="{{ route('home') }}" class="mb-7 flex justify-center" aria-label="{{ __('Ample Grace Academy home') }}" wire:navigate>
+                    <img
+                        src="{{ asset('images/branding/ample-grace-logo.png') }}"
+                        alt="Ample Grace Academy"
+                        width="140"
+                        height="145"
+                        class="h-28 w-auto object-contain"
+                    >
                 </a>
-                <div class="flex flex-col gap-6">
-                    {{ $slot }}
-                </div>
+
+                {{ $slot }}
             </div>
-        </div>
+        </main>
 
         @persist('toast')
             <flux:toast.group>
