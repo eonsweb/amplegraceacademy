@@ -1,32 +1,38 @@
 @php
+    use App\Support\Authorization\Permissions;
+
+    $user = auth()->user();
     $navigationGroups = [
         'Academic' => [
-            ['label' => 'Students', 'icon' => 'user-group'],
-            ['label' => 'Teachers', 'icon' => 'academic-cap'],
-            ['label' => 'Classes', 'icon' => 'book-open'],
-            ['label' => 'Subjects', 'icon' => 'building-library'],
-            ['label' => 'Timetable', 'icon' => 'calendar-days'],
-            ['label' => 'Attendance', 'icon' => 'check-circle'],
-            ['label' => 'Examinations', 'icon' => 'clipboard-document-check'],
-            ['label' => 'Grades', 'icon' => 'chart-bar'],
+            ['label' => 'Students', 'icon' => 'user-group', 'permission' => Permissions::STUDENTS_VIEW],
+            ['label' => 'Teachers', 'icon' => 'academic-cap', 'permission' => Permissions::STAFF_VIEW],
+            ['label' => 'Classes', 'icon' => 'book-open', 'permission' => Permissions::CLASSES_VIEW],
+            ['label' => 'Subjects', 'icon' => 'building-library', 'permission' => Permissions::SUBJECTS_VIEW],
+            ['label' => 'Attendance', 'icon' => 'check-circle', 'permission' => Permissions::ATTENDANCE_VIEW],
+            ['label' => 'Examinations', 'icon' => 'clipboard-document-check', 'permission' => Permissions::ASSESSMENTS_VIEW],
+            ['label' => 'Grades', 'icon' => 'chart-bar', 'permission' => Permissions::ASSESSMENTS_VIEW],
         ],
         'Finance' => [
-            ['label' => 'Fees', 'icon' => 'banknotes'],
-            ['label' => 'Payments', 'icon' => 'wallet'],
-            ['label' => 'Expenses', 'icon' => 'receipt-percent'],
-            ['label' => 'Invoices', 'icon' => 'document-text'],
-        ],
-        'Communication' => [
-            ['label' => 'Notices', 'icon' => 'bell'],
-            ['label' => 'Messages', 'icon' => 'envelope'],
-            ['label' => 'Events', 'icon' => 'calendar'],
+            ['label' => 'Fees', 'icon' => 'banknotes', 'permission' => Permissions::FEES_VIEW],
+            ['label' => 'Payments', 'icon' => 'wallet', 'permission' => Permissions::PAYMENTS_VIEW],
+            ['label' => 'Expenses', 'icon' => 'receipt-percent', 'permission' => Permissions::EXPENSES_VIEW],
         ],
         'System' => [
-            ['label' => 'Users', 'icon' => 'users'],
-            ['label' => 'Roles & Permissions', 'icon' => 'lock-closed'],
-            ['label' => 'Settings', 'icon' => 'cog-6-tooth', 'href' => route('profile.edit')],
+            ['label' => 'Users', 'icon' => 'users', 'href' => route('users.index'), 'permission' => Permissions::USERS_VIEW, 'active' => request()->routeIs('users.*')],
+            ['label' => 'Roles & Permissions', 'icon' => 'lock-closed', 'href' => route('roles.index'), 'permission' => [Permissions::ROLES_VIEW, Permissions::PERMISSIONS_VIEW], 'active' => request()->routeIs('roles.*')],
+            ['label' => 'System Settings', 'icon' => 'cog-6-tooth', 'href' => route('settings.system'), 'permission' => [Permissions::SETTINGS_VIEW, Permissions::SETTINGS_UPDATE], 'active' => request()->routeIs('settings.system')],
         ],
     ];
+
+    $navigationGroups = collect($navigationGroups)
+        ->map(fn (array $items): array => array_values(array_filter(
+            $items,
+            fn (array $item): bool => is_array($item['permission'])
+                ? $user->canAny($item['permission'])
+                : $user->can($item['permission']),
+        )))
+        ->filter()
+        ->all();
 @endphp
 
 <aside
@@ -62,12 +68,14 @@
     </div>
 
     <nav class="flex-1 overflow-y-auto px-4 py-4" aria-label="School administration">
-        <x-app.sidebar-item
-            icon="home"
-            label="Dashboard"
-            :href="route('dashboard')"
-            :active="request()->routeIs('dashboard')"
-        />
+        @can(Permissions::DASHBOARD_VIEW)
+            <x-app.sidebar-item
+                icon="home"
+                label="Dashboard"
+                :href="route('dashboard')"
+                :active="request()->routeIs('dashboard')"
+            />
+        @endcan
 
         @foreach ($navigationGroups as $group => $items)
             <section class="mt-5" aria-labelledby="sidebar-{{ str($group)->slug() }}">
@@ -80,7 +88,7 @@
                             :icon="$item['icon']"
                             :label="$item['label']"
                             :href="$item['href'] ?? null"
-                            :active="isset($item['href']) && request()->url() === $item['href']"
+                            :active="$item['active'] ?? (isset($item['href']) && request()->url() === $item['href'])"
                         />
                     @endforeach
                 </div>

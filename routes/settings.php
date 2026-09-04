@@ -1,5 +1,6 @@
 <?php
 
+use App\Support\Authorization\Permissions;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])->group(function () {
@@ -16,6 +17,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
             'password.confirm',
         ])
         ->name('security.edit');
+
+    Route::livewire('settings/system', 'pages::settings.system')
+        ->middleware('permission:'.Permissions::SETTINGS_VIEW.'|'.Permissions::SETTINGS_UPDATE)
+        ->name('settings.system');
+
+    Route::livewire('settings/users', 'pages::settings.users.index')
+        ->middleware('permission:'.Permissions::USERS_VIEW)
+        ->name('users.index');
+
+    Route::livewire('settings/users/{user}/authorization', 'pages::settings.users.authorization')
+        ->middleware('permission:'.Permissions::USERS_VIEW)
+        ->name('users.authorization');
+
+    Route::livewire('settings/roles', 'pages::settings.roles.index')
+        ->middleware('permission:'.Permissions::ROLES_VIEW.'|'.Permissions::PERMISSIONS_VIEW)
+        ->name('roles.index');
+
+    Route::livewire('settings/roles/{role}', 'pages::settings.roles.edit')
+        ->middleware('permission:'.Permissions::ROLES_VIEW.'|'.Permissions::PERMISSIONS_VIEW)
+        ->name('roles.edit');
 });
 
 Route::get('.well-known/passkey-endpoints', function () {
