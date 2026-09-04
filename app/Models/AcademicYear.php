@@ -30,4 +30,10 @@ class AcademicYear extends Model
     {
         return $this->hasMany(ClassSubject::class);
     }
+
+    /** @return HasMany<Enrollment, $this> */
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(Enrollment::class);
+    }
 }

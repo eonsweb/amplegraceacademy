@@ -15,6 +15,19 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
     Route::view('dashboard', 'dashboard')
         ->middleware('permission:'.Permissions::DASHBOARD_VIEW)
         ->name('dashboard');
+
+    Route::livewire('students', 'pages::students.index')
+        ->middleware('permission:'.Permissions::STUDENTS_VIEW)
+        ->name('students.index');
+    Route::livewire('students/create', 'pages::students.create')
+        ->middleware('permission:'.Permissions::STUDENTS_CREATE)
+        ->name('students.create');
+    Route::livewire('students/{student}', 'pages::students.show')
+        ->middleware('permission:'.Permissions::STUDENTS_VIEW)
+        ->name('students.show');
+    Route::livewire('students/{student}/edit', 'pages::students.edit')
+        ->middleware('permission:'.Permissions::STUDENTS_UPDATE)
+        ->name('students.edit');
 });
 
 Route::middleware(['auth', 'verified', 'password.changed'])
