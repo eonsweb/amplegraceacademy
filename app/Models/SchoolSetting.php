@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 #[Fillable([
     'school_name',
+    'school_initials',
     'contact_email',
     'phone',
     'address',

@@ -22,6 +22,10 @@ final class Permissions
 
     public const GUARDIANS_DELETE = 'guardians.delete';
 
+    public const GUARDIANS_LINK_STUDENT = 'guardians.link-student';
+
+    public const GUARDIANS_UNLINK_STUDENT = 'guardians.unlink-student';
+
     public const STAFF_VIEW = 'staff.view';
 
     public const STAFF_CREATE = 'staff.create';
@@ -120,7 +124,7 @@ final class Permissions
         return [
             'Dashboard' => [self::DASHBOARD_VIEW => 'View dashboard'],
             'Students' => [self::STUDENTS_VIEW => 'View students', self::STUDENTS_CREATE => 'Create students', self::STUDENTS_UPDATE => 'Update students', self::STUDENTS_DELETE => 'Delete students'],
-            'Guardians' => [self::GUARDIANS_VIEW => 'View guardians', self::GUARDIANS_CREATE => 'Create guardians', self::GUARDIANS_UPDATE => 'Update guardians', self::GUARDIANS_DELETE => 'Delete guardians'],
+            'Guardians' => [self::GUARDIANS_VIEW => 'View guardians', self::GUARDIANS_CREATE => 'Create guardians', self::GUARDIANS_UPDATE => 'Update guardians', self::GUARDIANS_DELETE => 'Delete guardians', self::GUARDIANS_LINK_STUDENT => 'Link guardians to students', self::GUARDIANS_UNLINK_STUDENT => 'Unlink guardians from students'],
             'Staff' => [self::STAFF_VIEW => 'View staff', self::STAFF_CREATE => 'Create staff', self::STAFF_UPDATE => 'Update staff', self::STAFF_DELETE => 'Delete staff'],
             'Classes' => [self::CLASSES_VIEW => 'View classes', self::CLASSES_CREATE => 'Create classes', self::CLASSES_UPDATE => 'Update classes', self::CLASSES_DELETE => 'Delete classes'],
             'Subjects' => [self::SUBJECTS_VIEW => 'View subjects', self::SUBJECTS_CREATE => 'Create subjects', self::SUBJECTS_UPDATE => 'Update subjects', self::SUBJECTS_DELETE => 'Delete subjects'],

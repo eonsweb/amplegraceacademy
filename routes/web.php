@@ -28,6 +28,19 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
     Route::livewire('students/{student}/edit', 'pages::students.edit')
         ->middleware('permission:'.Permissions::STUDENTS_UPDATE)
         ->name('students.edit');
+
+    Route::livewire('guardians', 'pages::guardians.index')
+        ->middleware('permission:'.Permissions::GUARDIANS_VIEW)
+        ->name('guardians.index');
+    Route::livewire('guardians/create', 'pages::guardians.create')
+        ->middleware('permission:'.Permissions::GUARDIANS_CREATE)
+        ->name('guardians.create');
+    Route::livewire('guardians/{guardian}', 'pages::guardians.show')
+        ->middleware('permission:'.Permissions::GUARDIANS_VIEW)
+        ->name('guardians.show');
+    Route::livewire('guardians/{guardian}/edit', 'pages::guardians.edit')
+        ->middleware('permission:'.Permissions::GUARDIANS_UPDATE)
+        ->name('guardians.edit');
 });
 
 Route::middleware(['auth', 'verified', 'password.changed'])

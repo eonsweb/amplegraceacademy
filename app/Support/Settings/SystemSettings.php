@@ -34,6 +34,7 @@ final class SystemSettings
     /** @var list<string> */
     private const KEYS = [
         'school_name',
+        'school_initials',
         'contact_email',
         'phone',
         'address',
@@ -77,6 +78,10 @@ final class SystemSettings
      */
     public function update(array $values): array
     {
+        if (isset($values['school_initials'])) {
+            $values['school_initials'] = str($values['school_initials'])->trim()->upper()->toString();
+        }
+
         $unexpectedKeys = array_diff(array_keys($values), self::KEYS);
 
         if ($unexpectedKeys !== []) {
@@ -117,6 +122,13 @@ final class SystemSettings
     public function schoolName(): string
     {
         return (string) $this->get('school_name', config('app.name', 'Ample Grace Academy'));
+    }
+
+    public function schoolInitials(): ?string
+    {
+        $initials = $this->get('school_initials');
+
+        return is_string($initials) && $initials !== '' ? $initials : null;
     }
 
     public function currency(): string
@@ -216,6 +228,7 @@ final class SystemSettings
     {
         return [
             'school_name' => (string) config('app.name', 'Ample Grace Academy'),
+            'school_initials' => null,
             'contact_email' => null,
             'phone' => null,
             'address' => null,

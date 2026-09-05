@@ -22,7 +22,7 @@ class GuardianFactory extends Factory
             'first_name' => fake()->firstName(),
             'middle_name' => fake()->optional()->firstName(),
             'last_name' => fake()->lastName(),
-            'relationship' => fake()->randomElement(['Mother', 'Father', 'Guardian']),
+            'relationship' => fake()->randomElement(['Mother', 'Father', 'Legal Guardian']),
             'phone' => fake()->phoneNumber(),
             'email' => fake()->optional()->safeEmail(),
             'address' => fake()->optional()->address(),

@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
-#[Fillable(['admission_number', 'first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'photo', 'status'])]
+/** @property Carbon|null $date_of_birth */
+#[Fillable(['first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'photo', 'status'])]
 class Student extends Model
 {
     /** @use HasFactory<StudentFactory> */
@@ -29,15 +31,22 @@ class Student extends Model
         ];
     }
 
-    /** @return BelongsToMany<Guardian, $this> */
+    /** @return BelongsToMany<Guardian, $this, StudentGuardian, 'pivot'> */
     public function guardians(): BelongsToMany
     {
         return $this->belongsToMany(Guardian::class, 'student_guardian')
-            ->withPivot(['id', 'is_primary'])
+            ->using(StudentGuardian::class)
+            ->withPivot(['id', 'relationship', 'is_primary'])
             ->withTimestamps();
     }
 
-    /** @return BelongsToMany<Guardian, $this> */
+    /** @return HasMany<StudentGuardian, $this> */
+    public function studentGuardians(): HasMany
+    {
+        return $this->hasMany(StudentGuardian::class);
+    }
+
+    /** @return BelongsToMany<Guardian, $this, StudentGuardian, 'pivot'> */
     public function primaryGuardians(): BelongsToMany
     {
         return $this->guardians()->wherePivot('is_primary', true);
@@ -60,6 +69,11 @@ class Student extends Model
     public function fullName(): string
     {
         return collect([$this->first_name, $this->middle_name, $this->last_name])->filter()->implode(' ');
+    }
+
+    public function age(): ?int
+    {
+        return $this->date_of_birth?->age;
     }
 
     public function photoUrl(): ?string

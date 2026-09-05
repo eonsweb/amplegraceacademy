@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Validation\ValidationException;
 
+/** @property EnrollmentStatus $status */
 #[Fillable(['student_id', 'academic_year_id', 'class_level_id', 'enrollment_date', 'status'])]
 class Enrollment extends Model
 {

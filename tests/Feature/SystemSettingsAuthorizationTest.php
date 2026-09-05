@@ -47,9 +47,11 @@ test('a direct update permission allows system settings changes', function () {
     Livewire::actingAs($user)
         ->test('pages::settings.system')
         ->set('schoolName', 'Ample Grace Academy')
+        ->set('schoolInitials', 'AGA')
         ->set('contactEmail', 'office@example.com')
         ->call('save')
         ->assertHasNoErrors();
 
-    expect(SchoolSetting::query()->value('contact_email'))->toBe('office@example.com');
+    expect(SchoolSetting::query()->value('contact_email'))->toBe('office@example.com')
+        ->and(SchoolSetting::query()->value('school_initials'))->toBe('AGA');
 });

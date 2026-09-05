@@ -43,6 +43,34 @@ test('updating settings invalidates the cached value', function () {
         ->and($settings->currency())->toBe('EUR');
 });
 
+test('school initials are trimmed and normalized to uppercase', function () {
+    SchoolSetting::factory()->create(['id' => 1, 'school_initials' => 'OLD']);
+    Permission::findOrCreate(Permissions::SETTINGS_UPDATE);
+    $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::SETTINGS_UPDATE);
+
+    Livewire::actingAs($user)
+        ->test('pages::settings.system')
+        ->set('schoolInitials', '  aga1  ')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    expect(SchoolSetting::query()->findOrFail(1)->school_initials)->toBe('AGA1');
+});
+
+test('school initials reject admission number separators', function () {
+    SchoolSetting::factory()->create(['id' => 1]);
+    Permission::findOrCreate(Permissions::SETTINGS_UPDATE);
+    $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::SETTINGS_UPDATE);
+
+    Livewire::actingAs($user)
+        ->test('pages::settings.system')
+        ->set('schoolInitials', 'A/GA')
+        ->call('save')
+        ->assertHasErrors(['schoolInitials']);
+});
+
 test('branding resolves custom and fallback assets in order', function () {
     Cache::forget(SystemSettings::CACHE_KEY);
     SchoolSetting::factory()->create([

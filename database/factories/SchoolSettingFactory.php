@@ -19,6 +19,7 @@ class SchoolSettingFactory extends Factory
     {
         return [
             'school_name' => fake()->company(),
+            'school_initials' => 'TSA',
             'contact_email' => fake()->safeEmail(),
             'phone' => fake()->phoneNumber(),
             'address' => fake()->address(),

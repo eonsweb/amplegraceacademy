@@ -6,6 +6,7 @@
         'Academic' => [
             ['label' => 'Academic Setup', 'icon' => 'wrench-screwdriver', 'href' => route('academic.index'), 'permission' => [Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW], 'active' => request()->routeIs('academic.*')],
             ['label' => 'Students', 'icon' => 'user-group', 'href' => route('students.index'), 'permission' => Permissions::STUDENTS_VIEW, 'active' => request()->routeIs('students.*')],
+            ['label' => 'Guardians / Parents', 'icon' => 'users', 'href' => route('guardians.index'), 'permission' => Permissions::GUARDIANS_VIEW, 'active' => request()->routeIs('guardians.*')],
             ['label' => 'Teachers', 'icon' => 'academic-cap', 'permission' => Permissions::STAFF_VIEW],
             ['label' => 'Classes', 'icon' => 'book-open', 'permission' => Permissions::CLASSES_VIEW],
             ['label' => 'Subjects', 'icon' => 'building-library', 'permission' => Permissions::SUBJECTS_VIEW],

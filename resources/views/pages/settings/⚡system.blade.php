@@ -16,6 +16,7 @@ new #[Title('System settings')] class extends Component {
     use WithFileUploads;
 
     public string $schoolName = '';
+    public string $schoolInitials = '';
     public string $contactEmail = '';
     public string $phone = '';
     public string $address = '';
@@ -45,9 +46,11 @@ new #[Title('System settings')] class extends Component {
     public function save(SystemSettings $settings): void
     {
         Gate::authorize(Permissions::SETTINGS_UPDATE);
+        $this->schoolInitials = str($this->schoolInitials)->trim()->upper()->toString();
 
         $validated = $this->validate([
             'schoolName' => ['required', 'string', 'max:255'],
+            'schoolInitials' => ['required', 'string', 'max:10', 'regex:/^[A-Z0-9]+$/'],
             'contactEmail' => ['nullable', 'email', 'max:255'],
             'phone' => ['nullable', 'string', 'max:30'],
             'address' => ['nullable', 'string', 'max:500'],
@@ -55,6 +58,7 @@ new #[Title('System settings')] class extends Component {
 
         $changedKeys = $settings->update([
             'school_name' => trim($validated['schoolName']),
+            'school_initials' => str($validated['schoolInitials'])->trim()->upper()->toString(),
             'contact_email' => filled($validated['contactEmail']) ? trim($validated['contactEmail']) : null,
             'phone' => filled($validated['phone']) ? trim($validated['phone']) : null,
             'address' => filled($validated['address']) ? trim($validated['address']) : null,
@@ -168,6 +172,7 @@ new #[Title('System settings')] class extends Component {
     private function fillFromSettings(SystemSettings $settings): void
     {
         $this->schoolName = $settings->schoolName();
+        $this->schoolInitials = (string) $settings->schoolInitials();
         $this->contactEmail = (string) $settings->get('contact_email', '');
         $this->phone = (string) $settings->get('phone', '');
         $this->address = (string) $settings->get('address', '');
@@ -215,6 +220,7 @@ new #[Title('System settings')] class extends Component {
 
             <form x-show="section === 'general'" wire:submit="save" class="grid gap-5">
                 <flux:input wire:model="schoolName" label="School name" maxlength="255" required :disabled="! auth()->user()->can(Permissions::SETTINGS_UPDATE)" />
+                <flux:input wire:model="schoolInitials" label="School initials" description="Letters and numbers only. Used as the admission-number prefix." maxlength="10" required :disabled="! auth()->user()->can(Permissions::SETTINGS_UPDATE)" />
                 <flux:input wire:model="contactEmail" type="email" label="Contact email" maxlength="255" :disabled="! auth()->user()->can(Permissions::SETTINGS_UPDATE)" />
                 <flux:input wire:model="phone" type="tel" label="Phone" maxlength="30" :disabled="! auth()->user()->can(Permissions::SETTINGS_UPDATE)" />
                 <flux:textarea wire:model="address" label="Address" rows="4" maxlength="500" :disabled="! auth()->user()->can(Permissions::SETTINGS_UPDATE)" />
