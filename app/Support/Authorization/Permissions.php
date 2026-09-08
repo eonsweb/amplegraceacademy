@@ -34,6 +34,10 @@ final class Permissions
 
     public const STAFF_DELETE = 'staff.delete';
 
+    public const STAFF_MANAGE_STATUS = 'staff.manage-status';
+
+    public const STAFF_MANAGE_USER_ACCOUNT = 'staff.manage-user-account';
+
     public const CLASSES_VIEW = 'classes.view';
 
     public const CLASSES_CREATE = 'classes.create';
@@ -125,7 +129,7 @@ final class Permissions
             'Dashboard' => [self::DASHBOARD_VIEW => 'View dashboard'],
             'Students' => [self::STUDENTS_VIEW => 'View students', self::STUDENTS_CREATE => 'Create students', self::STUDENTS_UPDATE => 'Update students', self::STUDENTS_DELETE => 'Delete students'],
             'Guardians' => [self::GUARDIANS_VIEW => 'View guardians', self::GUARDIANS_CREATE => 'Create guardians', self::GUARDIANS_UPDATE => 'Update guardians', self::GUARDIANS_DELETE => 'Delete guardians', self::GUARDIANS_LINK_STUDENT => 'Link guardians to students', self::GUARDIANS_UNLINK_STUDENT => 'Unlink guardians from students'],
-            'Staff' => [self::STAFF_VIEW => 'View staff', self::STAFF_CREATE => 'Create staff', self::STAFF_UPDATE => 'Update staff', self::STAFF_DELETE => 'Delete staff'],
+            'Staff' => [self::STAFF_VIEW => 'View staff', self::STAFF_CREATE => 'Create staff', self::STAFF_UPDATE => 'Update staff', self::STAFF_DELETE => 'Delete staff', self::STAFF_MANAGE_STATUS => 'Change staff status', self::STAFF_MANAGE_USER_ACCOUNT => 'Link staff user accounts'],
             'Classes' => [self::CLASSES_VIEW => 'View classes', self::CLASSES_CREATE => 'Create classes', self::CLASSES_UPDATE => 'Update classes', self::CLASSES_DELETE => 'Delete classes'],
             'Subjects' => [self::SUBJECTS_VIEW => 'View subjects', self::SUBJECTS_CREATE => 'Create subjects', self::SUBJECTS_UPDATE => 'Update subjects', self::SUBJECTS_DELETE => 'Delete subjects'],
             'Attendance' => [self::ATTENDANCE_VIEW => 'View attendance', self::ATTENDANCE_RECORD => 'Record attendance', self::ATTENDANCE_UPDATE => 'Update attendance'],

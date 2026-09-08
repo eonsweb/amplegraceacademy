@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
@@ -19,6 +20,7 @@ use Spatie\Permission\Traits\HasRoles;
 
 /**
  * @property int $id
+ * @property int|null $staff_id
  * @property string $username
  * @property string $name
  * @property string $email
@@ -34,7 +36,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['username', 'name', 'email', 'password', 'is_active', 'must_change_password', 'theme'])]
+#[Fillable(['staff_id', 'username', 'name', 'email', 'password', 'is_active', 'must_change_password', 'theme'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
 class User extends Authenticatable implements PasskeyUser
 {
@@ -66,6 +68,12 @@ class User extends Authenticatable implements PasskeyUser
         return Attribute::make(
             set: fn (string $value): string => Str::lower(trim($value)),
         );
+    }
+
+    /** @return BelongsTo<Staff, $this> */
+    public function staff(): BelongsTo
+    {
+        return $this->belongsTo(Staff::class);
     }
 
     /**

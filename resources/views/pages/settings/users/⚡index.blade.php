@@ -1,5 +1,6 @@
 <?php
 
+use App\Actions\Users\CreateManagedUser;
 use App\Events\UserManagementChanged;
 use App\Models\User;
 use App\Support\Authorization\AuthorizationSafety;
@@ -24,8 +25,6 @@ use Spatie\Permission\Models\Role;
 
 new #[Title('Users')] class extends Component {
     use WithPagination;
-
-    private const TEMPORARY_PASSWORD = 'password';
 
     #[Url]
     public string $search = '';
@@ -144,7 +143,7 @@ new #[Title('Users')] class extends Component {
         $this->showUserForm = true;
     }
 
-    public function saveUser(AuthorizationSafety $safety): void
+    public function saveUser(AuthorizationSafety $safety, CreateManagedUser $creator): void
     {
         $this->name = trim($this->name);
         $this->username = Str::lower(trim($this->username));
@@ -173,7 +172,7 @@ new #[Title('Users')] class extends Component {
         ]);
 
         if ($user === null) {
-            $this->createUser($validated, $safety);
+            $this->createUser($validated, $safety, $creator);
 
             return;
         }
@@ -190,7 +189,7 @@ new #[Title('Users')] class extends Component {
 
         DB::transaction(function () use ($user): void {
             $user->forceFill([
-                'password' => Hash::make(self::TEMPORARY_PASSWORD),
+                'password' => Hash::make(CreateManagedUser::TEMPORARY_PASSWORD),
                 'must_change_password' => true,
                 'remember_token' => Str::random(60),
             ])->save();
@@ -259,31 +258,18 @@ new #[Title('Users')] class extends Component {
     /**
      * @param  array{name: string, username: string, email: string, roleNames: list<string>, isActive: bool}  $validated
      */
-    private function createUser(array $validated, AuthorizationSafety $safety): void
+    private function createUser(array $validated, AuthorizationSafety $safety, CreateManagedUser $creator): void
     {
         Gate::authorize(Permissions::USERS_CREATE);
         Gate::authorize(Permissions::USERS_ASSIGN_ROLE);
-        $safety->ensureRolesAndPermissionsMayBeGranted(auth()->user(), $validated['roleNames'], []);
-
-        $user = DB::transaction(function () use ($validated): User {
-            $createdUser = User::query()->create([
-                'name' => $validated['name'],
-                'username' => $validated['username'],
-                'email' => $validated['email'],
-                'password' => Hash::make(self::TEMPORARY_PASSWORD),
-                'is_active' => $validated['isActive'],
-                'must_change_password' => true,
-            ]);
-
-            $createdUser->syncRoles($validated['roleNames']);
-
-            return $createdUser;
-        });
-
-        UserManagementChanged::dispatch('user.created', auth()->id(), $user->id, [
-            'roles' => $validated['roleNames'],
+        $actor = auth()->user();
+        abort_if($actor === null, 403);
+        $creator->handle($actor, [
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
             'is_active' => $validated['isActive'],
-        ]);
+        ], $validated['roleNames'], $safety);
 
         $this->finishSaving();
         Flux::toast(variant: 'success', text: 'User created. Temporary password: password. A password change is required at first login.');
