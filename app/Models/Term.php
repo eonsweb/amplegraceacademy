@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use LogicException;
 
 #[Fillable(['academic_year_id', 'name', 'term_order', 'is_current'])]
@@ -50,5 +51,11 @@ class Term extends Model
     public function academicYear(): BelongsTo
     {
         return $this->belongsTo(AcademicYear::class);
+    }
+
+    /** @return HasMany<Attendance, $this> */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
     }
 }

@@ -58,7 +58,7 @@ final class Permissions
 
     public const ATTENDANCE_RECORD = 'attendance.record';
 
-    public const ATTENDANCE_UPDATE = 'attendance.update';
+    public const ATTENDANCE_EDIT = 'attendance.edit';
 
     public const ASSESSMENTS_VIEW = 'assessments.view';
 
@@ -132,7 +132,7 @@ final class Permissions
             'Staff' => [self::STAFF_VIEW => 'View staff', self::STAFF_CREATE => 'Create staff', self::STAFF_UPDATE => 'Update staff', self::STAFF_DELETE => 'Delete staff', self::STAFF_MANAGE_STATUS => 'Change staff status', self::STAFF_MANAGE_USER_ACCOUNT => 'Link staff user accounts'],
             'Classes' => [self::CLASSES_VIEW => 'View classes', self::CLASSES_CREATE => 'Create classes', self::CLASSES_UPDATE => 'Update classes', self::CLASSES_DELETE => 'Delete classes'],
             'Subjects' => [self::SUBJECTS_VIEW => 'View subjects', self::SUBJECTS_CREATE => 'Create subjects', self::SUBJECTS_UPDATE => 'Update subjects', self::SUBJECTS_DELETE => 'Delete subjects'],
-            'Attendance' => [self::ATTENDANCE_VIEW => 'View attendance', self::ATTENDANCE_RECORD => 'Record attendance', self::ATTENDANCE_UPDATE => 'Update attendance'],
+            'Attendance' => [self::ATTENDANCE_VIEW => 'View attendance', self::ATTENDANCE_RECORD => 'Record attendance', self::ATTENDANCE_EDIT => 'Edit attendance'],
             'Assessments' => [self::ASSESSMENTS_VIEW => 'View assessments', self::ASSESSMENTS_CREATE => 'Create assessments', self::ASSESSMENTS_UPDATE => 'Update assessments', self::ASSESSMENTS_DELETE => 'Delete assessments', self::ASSESSMENTS_RECORD_SCORES => 'Record scores'],
             'Fees' => [self::FEES_VIEW => 'View fees', self::FEES_MANAGE => 'Manage fees'],
             'Payments' => [self::PAYMENTS_VIEW => 'View payments', self::PAYMENTS_RECORD => 'Record payments'],

@@ -12,6 +12,13 @@ Route::livewire('password/change-required', 'pages::auth.change-required-passwor
     ->name('password.change-required');
 
 Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
+    Route::livewire('attendance', 'pages::attendance.class-attendance')
+        ->middleware('permission:'.Permissions::ATTENDANCE_VIEW)
+        ->name('attendance.index');
+    Route::livewire('attendance/history', 'pages::attendance.attendance-history')
+        ->middleware('permission:'.Permissions::ATTENDANCE_VIEW)
+        ->name('attendance.history');
+
     Route::view('dashboard', 'dashboard')
         ->middleware('permission:'.Permissions::DASHBOARD_VIEW)
         ->name('dashboard');

@@ -1,5 +1,5 @@
-@import 'tailwindcss';
-@import '../../vendor/livewire/flux/dist/flux.css';
+@import "tailwindcss";
+@import "../../vendor/livewire/flux/dist/flux.css";
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
@@ -9,7 +9,10 @@
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans:
+        "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
+        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
+        "Noto Color Emoji";
 
     --color-brand-50: #fbf2f3;
     --color-brand-100: #f7e3e6;
@@ -47,7 +50,6 @@
 }
 
 @layer base {
-
     [x-cloak] {
         display: none !important;
     }
@@ -63,8 +65,12 @@
 
 @layer components {
     .app-sidebar-surface {
-        background-color: var(--color-brand-950);
-        background-image: radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--color-brand-600) 72%, transparent), transparent 42%);
+        background-color: var(--color-brand-900);
+        /* background-image: radial-gradient(
+            circle at 20% 0%,
+            color-mix(in srgb, var(--color-brand-600) 72%, transparent),
+            transparent 42%
+        ); */
     }
 }
 
@@ -73,7 +79,7 @@
 }
 
 [data-flux-label] {
-    @apply  !mb-0 !leading-tight;
+    @apply !mb-0 !leading-tight;
 }
 
 input:focus[data-flux-control],

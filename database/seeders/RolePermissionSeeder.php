@@ -34,7 +34,7 @@ class RolePermissionSeeder extends Seeder
                 Permissions::STAFF_MANAGE_STATUS, Permissions::STAFF_MANAGE_USER_ACCOUNT,
                 Permissions::CLASSES_VIEW, Permissions::CLASSES_CREATE, Permissions::CLASSES_UPDATE,
                 Permissions::SUBJECTS_VIEW, Permissions::SUBJECTS_CREATE, Permissions::SUBJECTS_UPDATE,
-                Permissions::ATTENDANCE_VIEW, Permissions::ATTENDANCE_RECORD, Permissions::ATTENDANCE_UPDATE,
+                Permissions::ATTENDANCE_VIEW, Permissions::ATTENDANCE_RECORD, Permissions::ATTENDANCE_EDIT,
                 Permissions::ASSESSMENTS_VIEW, Permissions::ASSESSMENTS_CREATE, Permissions::ASSESSMENTS_UPDATE,
                 Permissions::ASSESSMENTS_RECORD_SCORES, Permissions::REPORTS_VIEW,
                 ...Permissions::userManagement(),

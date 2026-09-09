@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Validation\ValidationException;
 
 /** @property EnrollmentStatus $status */
@@ -60,5 +61,11 @@ class Enrollment extends Model
     public function classLevel(): BelongsTo
     {
         return $this->belongsTo(ClassLevel::class);
+    }
+
+    /** @return HasMany<Attendance, $this> */
+    public function attendances(): HasMany
+    {
+        return $this->hasMany(Attendance::class);
     }
 }
