@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\PaymentReceiptController;
 use App\Support\Authorization\Permissions;
 use Illuminate\Support\Facades\Route;
 
@@ -12,6 +13,13 @@ Route::livewire('password/change-required', 'pages::auth.change-required-passwor
     ->name('password.change-required');
 
 Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
+    Route::livewire('assessments', 'pages::assessments.index')->middleware('permission:'.Permissions::ASSESSMENTS_VIEW)->name('assessments.index');
+    Route::livewire('assessments/create', 'pages::assessments.form')->middleware('permission:'.Permissions::ASSESSMENTS_CREATE)->name('assessments.create');
+    Route::livewire('assessments/{assessment}/edit', 'pages::assessments.form')->middleware('permission:'.Permissions::ASSESSMENTS_UPDATE)->name('assessments.edit');
+    Route::livewire('assessments/{assessment}/scores', 'pages::assessments.scores')->middleware('permission:'.Permissions::ASSESSMENTS_VIEW)->name('assessments.scores');
+    Route::livewire('results', 'pages::results.index')->middleware('permission:'.Permissions::RESULTS_VIEW)->name('results.index');
+    Route::livewire('results/students/{student}', 'pages::results.student')->middleware('permission:'.Permissions::RESULTS_VIEW)->name('results.student');
+
     Route::livewire('attendance', 'pages::attendance.class-attendance')
         ->middleware('permission:'.Permissions::ATTENDANCE_VIEW)
         ->name('attendance.index');
@@ -99,5 +107,47 @@ Route::middleware(['auth', 'verified', 'password.changed'])
             ->middleware('permission:'.Permissions::CLASSES_VIEW.'|'.Permissions::SUBJECTS_VIEW)
             ->name('class-subjects.index');
     });
+
+Route::middleware(['auth', 'verified', 'password.changed'])->prefix('fees')->name('fees.')->group(function () {
+    Route::get('/', function () {
+        foreach ([
+            Permissions::FEES_VIEW => 'fees.overview',
+            Permissions::FEES_MANAGE => 'fees.structures',
+            Permissions::FEE_TYPES_MANAGE => 'fees.types',
+            Permissions::INVOICES_VIEW => 'fees.invoices',
+            Permissions::PAYMENTS_RECORD => 'fees.record-payment',
+            Permissions::PAYMENTS_VIEW => 'fees.payments',
+            Permissions::BALANCES_VIEW => 'fees.outstanding',
+        ] as $permission => $route) {
+            if (request()->user()?->can($permission)) {
+                return to_route($route);
+            }
+        }
+        abort(403);
+    })->name('index');
+    foreach ([
+        'overview' => Permissions::FEES_VIEW,
+        'types' => Permissions::FEE_TYPES_MANAGE,
+        'structures' => Permissions::FEES_MANAGE,
+        'invoices' => Permissions::INVOICES_VIEW,
+        'record-payment' => Permissions::PAYMENTS_RECORD,
+        'payments' => Permissions::PAYMENTS_VIEW,
+        'outstanding' => Permissions::BALANCES_VIEW,
+    ] as $page => $permission) {
+        Route::livewire($page, 'pages::fees.'.$page)->middleware('permission:'.$permission)->name($page);
+    }
+    Route::livewire('invoices/{invoice}', 'pages::fees.invoice')->middleware('permission:'.Permissions::INVOICES_VIEW)->name('invoice');
+    Route::livewire('students/{student}', 'pages::fees.account')->middleware('permission:'.Permissions::BALANCES_VIEW)->name('account');
+    Route::get('receipts/{payment}', PaymentReceiptController::class)->middleware('permission:'.Permissions::RECEIPTS_PRINT)->name('receipt');
+});
+
+Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
+    Route::livewire('expenses', 'pages::expenses.index')->middleware('permission:'.Permissions::EXPENSES_VIEW)->name('expenses.index');
+    Route::livewire('expenses/create', 'pages::expenses.form')->middleware('permission:'.Permissions::EXPENSES_CREATE)->name('expenses.create');
+    Route::livewire('expenses/categories', 'pages::expenses.categories')->middleware('permission:'.Permissions::EXPENSE_CATEGORIES_MANAGE)->name('expenses.categories');
+    Route::livewire('expenses/{expense}/edit', 'pages::expenses.form')->middleware('permission:'.Permissions::EXPENSES_UPDATE)->name('expenses.edit');
+    Route::livewire('expenses/{expense}', 'pages::expenses.show')->middleware('permission:'.Permissions::EXPENSES_VIEW)->name('expenses.show');
+    Route::livewire('finance/overview', 'pages::finance.overview')->middleware('permission:'.Permissions::FINANCIAL_REPORTS_VIEW)->name('finance.overview');
+});
 
 require __DIR__.'/settings.php';

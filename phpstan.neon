@@ -9,5 +9,8 @@ parameters:
         - config/
         - database/
         - routes/
+        - resources/views/pages/fees/
+        - resources/views/pages/expenses/
+        - resources/views/pages/finance/
 
     level: 7

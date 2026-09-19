@@ -7,6 +7,8 @@ use App\Gender;
 use App\StudentStatus;
 use Database\Factories\StudentFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -58,6 +60,18 @@ class Student extends Model
         return $this->hasMany(Enrollment::class);
     }
 
+    /** @return HasMany<Invoice, $this> */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
+    }
+
+    /** @return HasMany<Payment, $this> */
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
     /** @return HasOne<Enrollment, $this> */
     public function currentEnrollment(): HasOne
     {
@@ -69,6 +83,27 @@ class Student extends Model
     public function fullName(): string
     {
         return collect([$this->first_name, $this->middle_name, $this->last_name])->filter()->implode(' ');
+    }
+
+    /** @param Builder<Student> $query
+     * @return Builder<Student>
+     */
+    #[Scope]
+    protected function matchingNameOrAdmission(Builder $query, string $search): Builder
+    {
+        $search = mb_substr(trim($search), 0, 100);
+        $parts = array_slice(explode(' ', preg_replace('/\s+/', ' ', $search) ?? $search), 0, 5);
+
+        return $query->where(function (Builder $query) use ($search, $parts): void {
+            $query->where('admission_number', 'like', $search.'%')
+                ->orWhere(function (Builder $names) use ($parts): void {
+                    foreach ($parts as $part) {
+                        $names->where(fn (Builder $name) => $name->where('first_name', 'like', '%'.$part.'%')
+                            ->orWhere('middle_name', 'like', '%'.$part.'%')
+                            ->orWhere('last_name', 'like', '%'.$part.'%'));
+                    }
+                });
+        });
     }
 
     public function age(): ?int

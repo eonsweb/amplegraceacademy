@@ -9,9 +9,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use Illuminate\Validation\ValidationException;
 
-/** @property EnrollmentStatus $status */
+/**
+ * @property EnrollmentStatus $status
+ * @property Carbon $enrollment_date
+ */
 #[Fillable(['student_id', 'academic_year_id', 'class_level_id', 'enrollment_date', 'status'])]
 class Enrollment extends Model
 {
@@ -21,6 +25,10 @@ class Enrollment extends Model
     protected static function booted(): void
     {
         static::saving(function (Enrollment $enrollment): void {
+            if ($enrollment->exists && $enrollment->isDirty(['student_id', 'academic_year_id', 'class_level_id', 'enrollment_date']) && $enrollment->assessmentScores()->exists()) {
+                throw ValidationException::withMessages(['enrollment' => 'An enrollment with assessment scores cannot be reassigned. Create a new enrollment to preserve its history.']);
+            }
+
             if ($enrollment->status !== EnrollmentStatus::Active) {
                 return;
             }
@@ -67,5 +75,17 @@ class Enrollment extends Model
     public function attendances(): HasMany
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    /** @return HasMany<AssessmentScore, $this> */
+    public function assessmentScores(): HasMany
+    {
+        return $this->hasMany(AssessmentScore::class);
+    }
+
+    /** @return HasMany<Invoice, $this> */
+    public function invoices(): HasMany
+    {
+        return $this->hasMany(Invoice::class);
     }
 }

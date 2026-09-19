@@ -70,9 +70,31 @@ final class Permissions
 
     public const ASSESSMENTS_RECORD_SCORES = 'assessments.record-scores';
 
+    public const ASSESSMENTS_MANAGE_ALL = 'assessments.manage-all';
+
+    public const RESULTS_VIEW = 'results.view';
+
+    public const RESULTS_VIEW_ALL = 'results.view-all';
+
     public const FEES_VIEW = 'fees.view';
 
     public const FEES_MANAGE = 'fees.manage';
+
+    public const FEE_TYPES_MANAGE = 'fee-types.manage';
+
+    public const INVOICES_VIEW = 'invoices.view';
+
+    public const INVOICES_GENERATE = 'invoices.generate';
+
+    public const INVOICES_VOID = 'invoices.void';
+
+    public const BALANCES_VIEW = 'balances.view';
+
+    public const FINANCIAL_REPORTS_VIEW = 'financial-reports.view';
+
+    public const RECEIPTS_PRINT = 'receipts.print';
+
+    public const PAYMENTS_VOID = 'payments.void';
 
     public const PAYMENTS_VIEW = 'payments.view';
 
@@ -85,6 +107,10 @@ final class Permissions
     public const EXPENSES_UPDATE = 'expenses.update';
 
     public const EXPENSES_DELETE = 'expenses.delete';
+
+    public const EXPENSES_VOID = 'expenses.void';
+
+    public const EXPENSE_CATEGORIES_MANAGE = 'expense-categories.manage';
 
     public const REPORTS_VIEW = 'reports.view';
 
@@ -133,10 +159,11 @@ final class Permissions
             'Classes' => [self::CLASSES_VIEW => 'View classes', self::CLASSES_CREATE => 'Create classes', self::CLASSES_UPDATE => 'Update classes', self::CLASSES_DELETE => 'Delete classes'],
             'Subjects' => [self::SUBJECTS_VIEW => 'View subjects', self::SUBJECTS_CREATE => 'Create subjects', self::SUBJECTS_UPDATE => 'Update subjects', self::SUBJECTS_DELETE => 'Delete subjects'],
             'Attendance' => [self::ATTENDANCE_VIEW => 'View attendance', self::ATTENDANCE_RECORD => 'Record attendance', self::ATTENDANCE_EDIT => 'Edit attendance'],
-            'Assessments' => [self::ASSESSMENTS_VIEW => 'View assessments', self::ASSESSMENTS_CREATE => 'Create assessments', self::ASSESSMENTS_UPDATE => 'Update assessments', self::ASSESSMENTS_DELETE => 'Delete assessments', self::ASSESSMENTS_RECORD_SCORES => 'Record scores'],
-            'Fees' => [self::FEES_VIEW => 'View fees', self::FEES_MANAGE => 'Manage fees'],
-            'Payments' => [self::PAYMENTS_VIEW => 'View payments', self::PAYMENTS_RECORD => 'Record payments'],
-            'Expenses' => [self::EXPENSES_VIEW => 'View expenses', self::EXPENSES_CREATE => 'Create expenses', self::EXPENSES_UPDATE => 'Update expenses', self::EXPENSES_DELETE => 'Delete expenses'],
+            'Assessments' => [self::ASSESSMENTS_VIEW => 'View assessments', self::ASSESSMENTS_CREATE => 'Create assessments', self::ASSESSMENTS_UPDATE => 'Update assessments', self::ASSESSMENTS_DELETE => 'Delete assessments', self::ASSESSMENTS_RECORD_SCORES => 'Record scores', self::ASSESSMENTS_MANAGE_ALL => 'Manage assessments across all subjects'],
+            'Results' => [self::RESULTS_VIEW => 'View results', self::RESULTS_VIEW_ALL => 'View results across all subjects'],
+            'Fees' => [self::FEES_VIEW => 'View fees overview', self::FEES_MANAGE => 'Manage fee structures', self::FEE_TYPES_MANAGE => 'Manage fee types', self::INVOICES_VIEW => 'View invoices', self::INVOICES_GENERATE => 'Generate invoices', self::INVOICES_VOID => 'Void invoices', self::BALANCES_VIEW => 'View student balances', self::FINANCIAL_REPORTS_VIEW => 'View financial reports'],
+            'Payments' => [self::PAYMENTS_VIEW => 'View payments', self::PAYMENTS_RECORD => 'Record payments', self::PAYMENTS_VOID => 'Void payments', self::RECEIPTS_PRINT => 'Print receipts'],
+            'Expenses' => [self::EXPENSES_VIEW => 'View expenses', self::EXPENSES_CREATE => 'Create expenses', self::EXPENSES_UPDATE => 'Edit and record draft expenses', self::EXPENSES_DELETE => 'Delete draft expenses', self::EXPENSES_VOID => 'Void recorded expenses', self::EXPENSE_CATEGORIES_MANAGE => 'Manage expense categories'],
             'Reports' => [self::REPORTS_VIEW => 'View reports'],
             'Users' => [self::USERS_VIEW => 'View users', self::USERS_CREATE => 'Create users', self::USERS_UPDATE => 'Update users', self::USERS_DELETE => 'Delete users', self::USERS_ASSIGN_ROLE => 'Assign user roles', self::USERS_RESET_PASSWORD => 'Reset user passwords', self::USERS_CHANGE_STATUS => 'Change user status'],
             'Roles' => [self::ROLES_VIEW => 'View roles', self::ROLES_CREATE => 'Create roles', self::ROLES_UPDATE => 'Update roles', self::ROLES_DELETE => 'Delete roles'],

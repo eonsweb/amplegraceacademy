@@ -22,7 +22,9 @@ class RolePermissionSeeder extends Seeder
                 Permissions::STAFF_DELETE, Permissions::STAFF_MANAGE_STATUS, Permissions::STAFF_MANAGE_USER_ACCOUNT,
                 Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW, Permissions::ATTENDANCE_VIEW,
                 Permissions::ASSESSMENTS_VIEW, Permissions::FEES_VIEW, Permissions::PAYMENTS_VIEW,
+                Permissions::INVOICES_VIEW, Permissions::BALANCES_VIEW, Permissions::FINANCIAL_REPORTS_VIEW, Permissions::RECEIPTS_PRINT,
                 Permissions::EXPENSES_VIEW, Permissions::REPORTS_VIEW,
+                Permissions::RESULTS_VIEW, Permissions::RESULTS_VIEW_ALL,
                 ...Permissions::userManagement(),
             ],
             Roles::HEADMASTER => [
@@ -37,12 +39,14 @@ class RolePermissionSeeder extends Seeder
                 Permissions::ATTENDANCE_VIEW, Permissions::ATTENDANCE_RECORD, Permissions::ATTENDANCE_EDIT,
                 Permissions::ASSESSMENTS_VIEW, Permissions::ASSESSMENTS_CREATE, Permissions::ASSESSMENTS_UPDATE,
                 Permissions::ASSESSMENTS_RECORD_SCORES, Permissions::REPORTS_VIEW,
+                Permissions::ASSESSMENTS_MANAGE_ALL, Permissions::RESULTS_VIEW, Permissions::RESULTS_VIEW_ALL,
                 ...Permissions::userManagement(),
             ],
             Roles::TEACHER => [
                 Permissions::DASHBOARD_VIEW, Permissions::STUDENTS_VIEW, Permissions::CLASSES_VIEW,
                 Permissions::SUBJECTS_VIEW, Permissions::ATTENDANCE_VIEW, Permissions::ATTENDANCE_RECORD,
                 Permissions::ASSESSMENTS_VIEW, Permissions::ASSESSMENTS_RECORD_SCORES,
+                Permissions::ASSESSMENTS_CREATE, Permissions::ASSESSMENTS_UPDATE, Permissions::RESULTS_VIEW,
             ],
         ];
 
