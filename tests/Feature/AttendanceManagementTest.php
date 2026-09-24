@@ -225,7 +225,7 @@ test('saving a large class uses a bounded number of queries and one bulk write',
     $queries = collect(DB::getQueryLog());
     DB::disableQueryLog();
     expect($queries->count())->toBeLessThan(20);
-    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'insert into "attendances"'))->count())->toBe(1);
+    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'insert into '.DB::connection()->getQueryGrammar()->wrapTable('attendances')))->count())->toBe(1);
     $this->assertDatabaseCount('attendances', 40);
 });
 
@@ -353,7 +353,7 @@ test('loading a class roster batches student and existing attendance queries', f
         DB::disableQueryLog();
     }
 
-    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'select') && str_contains($query['query'], 'from "students"'))->count())->toBe(1);
-    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'select * from "attendances"'))->count())->toBe(1);
+    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'select') && str_contains($query['query'], 'from '.DB::connection()->getQueryGrammar()->wrapTable('students')))->count())->toBe(1);
+    expect($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'select * from '.DB::connection()->getQueryGrammar()->wrapTable('attendances')))->count())->toBe(1);
     $this->assertDatabaseCount('attendances', 1);
 });

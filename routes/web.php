@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\PaymentReceiptController;
+use App\Http\Controllers\ReportExportController;
 use App\Support\Authorization\Permissions;
 use Illuminate\Support\Facades\Route;
 
@@ -151,3 +152,9 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
 });
 
 require __DIR__.'/settings.php';
+
+Route::middleware(['auth', 'verified', 'password.changed', 'permission:'.Permissions::REPORTS_VIEW])->prefix('reports')->name('reports.')->group(function () {
+    Route::livewire('/', 'pages::reports.index')->name('index');
+    Route::get('{report}/{format}', ReportExportController::class)->name('export');
+    Route::livewire('{report}', 'pages::reports.show')->name('show');
+});

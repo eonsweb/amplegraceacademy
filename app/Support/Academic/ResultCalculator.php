@@ -13,6 +13,11 @@ use Illuminate\Validation\ValidationException;
 
 class ResultCalculator
 {
+    public static function percentage(float $earned, float $maximum): ?float
+    {
+        return $maximum > 0 ? round($earned / $maximum * 100, 2) : null;
+    }
+
     /**
      * @param  Collection<int, Enrollment>  $enrollments
      * @return array<int, array{subjects: array<int, array<string, mixed>>, earned: float, maximum: float, percentage: ?float, complete: bool}>
@@ -65,13 +70,13 @@ class ResultCalculator
                 $subjectComplete = $breakdown !== [] && $missing === 0;
                 $complete = $complete && $subjectComplete;
                 $subjectResults[$id] = ['name' => $name, 'earned' => $earned / 100, 'maximum' => $maximum / 100,
-                    'missing' => $missing, 'complete' => $subjectComplete, 'percentage' => $subjectComplete ? round($earned / $maximum * 100, 2) : null,
+                    'missing' => $missing, 'complete' => $subjectComplete, 'percentage' => $subjectComplete ? self::percentage($earned, $maximum) : null,
                     'assessments' => $breakdown];
                 $totalEarned += $earned;
                 $totalMaximum += $maximum;
             }
             $results[$enrollment->id] = ['subjects' => $subjectResults, 'earned' => $totalEarned / 100, 'maximum' => $totalMaximum / 100,
-                'percentage' => $complete ? round($totalEarned / $totalMaximum * 100, 2) : null, 'complete' => $complete];
+                'percentage' => $complete ? self::percentage($totalEarned, $totalMaximum) : null, 'complete' => $complete];
         }
 
         return $results;

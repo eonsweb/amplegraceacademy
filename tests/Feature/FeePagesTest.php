@@ -8,6 +8,7 @@ use App\Models\FeeType;
 use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Payment;
+use App\Models\SchoolSetting;
 use App\Models\Student;
 use App\Models\Term;
 use App\Models\User;
@@ -131,6 +132,7 @@ test('financial details and receipts enforce their own permissions', function ()
 });
 
 test('receipt preserves invoice context receiver and configured currency', function () {
+    SchoolSetting::factory()->create(['id' => 1]);
     $actor = financialPageActor();
     $invoice = InvoiceItem::factory()->create()->invoice;
     $payment = financialPagePayment($actor, $invoice);

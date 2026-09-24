@@ -77,7 +77,7 @@ test('fee structure bulk save creates updates and audits a configuration', funct
     $this->assertDatabaseCount('fee_structures', 1);
     $this->assertDatabaseHas('fee_structures', ['amount' => '1300.50', 'is_active' => false]);
     $audit = DB::table('financial_audits')->orderByDesc('id')->first();
-    expect(json_decode($audit->changes, true))->toBe(['before' => ['amount' => '1200.25', 'is_active' => true], 'after' => ['amount' => '1300.50', 'is_active' => false]]);
+    expect(json_decode($audit->changes, true))->toEqual(['before' => ['amount' => '1200.25', 'is_active' => true], 'after' => ['amount' => '1300.50', 'is_active' => false]]);
 });
 
 test('fee structures reject invalid monetary amounts', function (string $amount) {

@@ -232,7 +232,7 @@ test('bulk score persistence uses bounded queries and one upsert', function () {
     }
 
     expect($queries->count())->toBeLessThan(20)
-        ->and($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'insert into "assessment_scores"'))->count())->toBe(1);
+        ->and($queries->filter(fn (array $query): bool => str_starts_with($query['query'], 'insert into '.DB::connection()->getQueryGrammar()->wrapTable('assessment_scores')))->count())->toBe(1);
     $this->assertDatabaseCount('assessment_scores', 40);
 });
 

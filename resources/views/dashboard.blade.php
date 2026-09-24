@@ -13,12 +13,13 @@
             </div>
         </header>
 
-        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-5" aria-label="Dashboard summary">
-            <x-app.stat-card icon="user-group" label="Total Students" value="1,248" trend="12 this month" />
-            <x-app.stat-card icon="academic-cap" label="Total Teachers" value="86" trend="2 this month" />
-            <x-app.stat-card icon="book-open" label="Total Classes" value="48" trend="No change" trend-tone="neutral" />
-            <x-app.stat-card icon="wallet" label="Fee Collection" :value="$systemSettings->formatMoney(4250000)" trend="18% this month" />
-            <x-app.stat-card icon="calendar-days" label="Attendance Today" value="92.6%" trend="3.4% vs yesterday" />
+        <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4 2xl:grid-cols-5" aria-label="Dashboard summary">
+            <x-app.stat-card icon="user-group" label="Total Pupils" value="1,248" trend="12 this month" />
+            <x-app.stat-card icon="wallet" label="Fee Collection" :value="$systemSettings->formatMoney(50000)" trend="18% this month" />
+            <x-app.stat-card icon="wallet" label="Outstanding Fees" :value="$systemSettings->formatMoney(150000)" trend="18% from yesterday" />
+            <x-app.stat-card icon="wallet" label="Canteen Collection(Today)" :value="$systemSettings->formatMoney(150000)" trend="18% from yesterday" />
+            
+        
         </section>
 
         <div class="grid gap-4 xl:grid-cols-2 2xl:grid-cols-12">

@@ -22,6 +22,7 @@
             ['label' => 'Financial Overview', 'icon' => 'chart-bar', 'href' => route('finance.overview'), 'permission' => Permissions::FINANCIAL_REPORTS_VIEW, 'active' => request()->routeIs('finance.*')],
         ],
         'System' => [
+            ['label' => 'Reports', 'icon' => 'chart-bar', 'href' => route('reports.index'), 'permission' => Permissions::REPORTS_VIEW, 'active' => request()->routeIs('reports.*')],
             ['label' => 'Users', 'icon' => 'users', 'href' => route('users.index'), 'permission' => Permissions::USERS_VIEW, 'active' => request()->routeIs('users.*')],
             ['label' => 'Roles & Permissions', 'icon' => 'lock-closed', 'href' => route('roles.index'), 'permission' => [Permissions::ROLES_VIEW, Permissions::PERMISSIONS_VIEW], 'active' => request()->routeIs('roles.*')],
             ['label' => 'System Settings', 'icon' => 'cog-6-tooth', 'href' => route('settings.system'), 'permission' => [Permissions::SETTINGS_VIEW, Permissions::SETTINGS_UPDATE], 'active' => request()->routeIs('settings.system')],

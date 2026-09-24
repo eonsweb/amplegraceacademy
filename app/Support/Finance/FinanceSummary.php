@@ -37,22 +37,33 @@ final class FinanceSummary
     /** @param array<string, string> $filters */
     public static function income(array $filters = []): QueryBuilder
     {
-        $query = DB::table('payments')->whereNull('payments.voided_at');
+        return DB::query()->fromSub(self::payments($filters)->whereNull('payments.voided_at'), 'income_payments')
+            ->selectRaw('COALESCE(SUM(period_amount), 0)');
+    }
+
+    /** Payment rows retain their original amount alongside the amount allocated to the selected period.
+     * @param  array<string, string>  $filters
+     */
+    public static function payments(array $filters = []): QueryBuilder
+    {
+        $query = DB::table('payments')->select('payments.*');
         self::dates($query, 'payments.payment_date', $filters);
         if (($filters['academic_year_id'] ?? '') !== '' || ($filters['term_id'] ?? '') !== '') {
-            $query->join('payment_allocations', 'payment_allocations.payment_id', '=', 'payments.id')
+            $allocations = DB::table('payment_allocations')
                 ->join('invoices', 'invoices.id', '=', 'payment_allocations.invoice_id')
                 ->whereNull('invoices.voided_at');
             foreach (['academic_year_id', 'term_id'] as $column) {
                 if (($filters[$column] ?? '') !== '') {
-                    $query->where('invoices.'.$column, $filters[$column]);
+                    $allocations->where('invoices.'.$column, $filters[$column]);
                 }
             }
 
-            return $query->selectRaw('COALESCE(SUM(payment_allocations.amount), 0)');
+            $allocations->select('payment_allocations.payment_id')->selectRaw('SUM(payment_allocations.amount) AS period_amount')->groupBy('payment_allocations.payment_id');
+
+            return $query->joinSub($allocations, 'period_allocations', 'period_allocations.payment_id', '=', 'payments.id')->addSelect('period_allocations.period_amount');
         }
 
-        return $query->selectRaw('COALESCE(SUM(payments.amount), 0)');
+        return $query->selectRaw('payments.amount AS period_amount');
     }
 
     /** @param array<string, string> $filters

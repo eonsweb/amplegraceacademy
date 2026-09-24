@@ -12,5 +12,6 @@ parameters:
         - resources/views/pages/fees/
         - resources/views/pages/expenses/
         - resources/views/pages/finance/
+        - resources/views/pages/reports/
 
     level: 7

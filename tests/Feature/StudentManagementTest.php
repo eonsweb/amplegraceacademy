@@ -35,6 +35,7 @@ function studentActor(array $permissions): User
 
 function studentFixture(): array
 {
+    SchoolSetting::factory()->create(['id' => 1]);
     app(SystemSettings::class)->update(['school_initials' => 'AGA']);
 
     return [AcademicYear::factory()->create(['is_current' => true]), ClassLevel::factory()->create()];
