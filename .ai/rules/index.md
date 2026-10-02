@@ -16,3 +16,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | {app/Models/User.php,app/Providers/FortifyServiceProvider.php,app/Http/Middleware/**,app/Http/Responses/**,resources/views/pages/auth/**,resources/views/pages/settings/users/**} | .ai/rules/settings-users.md |
 | tests/Feature/Expense*Test.php | .ai/rules/tests-feature.md |
 | {app/Support/Authorization/**,resources/views/pages/settings/roles/**,resources/views/pages/settings/users/**,routes/**} | .ai/rules/users.md |
+| {phpunit.xml,.github/workflows/tests.yml,tests/**} | .ai/rules/workflows.md |

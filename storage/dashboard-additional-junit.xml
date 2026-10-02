@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="Tests\Feature\DashboardTest" file="tests\Feature\DashboardTest.php" tests="2" assertions="15" errors="0" failures="0" skipped="0" time="31.411043">
+    <testcase name="one payment across academic periods is collected once and displays each historical class" file="tests\Feature\DashboardTest.php::one payment across academic periods is collected once and displays each historical class" class="Tests\Feature\DashboardTest" classname="Tests.Feature.DashboardTest" assertions="7" time="29.678168"/>
+    <testcase name="collections use the school calendar month at a UTC year boundary" file="tests\Feature\DashboardTest.php::collections use the school calendar month at a UTC year boundary" class="Tests\Feature\DashboardTest" classname="Tests.Feature.DashboardTest" assertions="8" time="1.732875"/>
+  </testsuite>
+</testsuites>

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PaymentReceiptController;
 use App\Http\Controllers\ReportExportController;
 use App\Support\Authorization\Permissions;
@@ -28,7 +29,7 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
         ->middleware('permission:'.Permissions::ATTENDANCE_VIEW)
         ->name('attendance.history');
 
-    Route::view('dashboard', 'dashboard')
+    Route::get('dashboard', DashboardController::class)
         ->middleware('permission:'.Permissions::DASHBOARD_VIEW)
         ->name('dashboard');
 

@@ -16,7 +16,7 @@ test('dashboard access is granted through a direct permission', function () {
     $user = User::factory()->create();
     $user->givePermissionTo(Permissions::DASHBOARD_VIEW);
 
-    $this->actingAs($user)->get(route('dashboard'))->assertSee('Fee Collection Overview');
+    $this->actingAs($user)->get(route('dashboard'))->assertSee('Dashboard')->assertDontSee('Fee Collection Overview');
 });
 
 test('navigation hides authorization links the user cannot access', function () {
