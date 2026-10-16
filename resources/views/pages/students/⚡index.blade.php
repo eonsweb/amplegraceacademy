@@ -96,7 +96,7 @@ new #[Title('Students')] class extends Component {
 <div class="grid gap-5">
     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div><flux:heading size="xl">Students</flux:heading><flux:text class="mt-1">Search student records and review current placement and guardian contacts.</flux:text></div>
-        @can(Permissions::STUDENTS_CREATE)<flux:button :href="route('students.create')" wire:navigate variant="primary" icon="plus">Add Student</flux:button>@endcan
+        <div class="flex gap-2">@can(Permissions::STUDENTS_IMPORT)<flux:button :href="route('students.import')" wire:navigate>Import Students</flux:button>@endcan @can(Permissions::STUDENTS_CREATE)<flux:button :href="route('students.create')" wire:navigate variant="primary" icon="plus">Add Student</flux:button>@endcan</div>
     </div>
     <x-app.panel title="Student directory">
         <div class="grid gap-3 border-b border-zinc-200 p-4 dark:border-zinc-800 md:grid-cols-2 xl:grid-cols-6">

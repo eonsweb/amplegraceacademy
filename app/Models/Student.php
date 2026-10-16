@@ -18,17 +18,21 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 
 /** @property Carbon|null $date_of_birth */
-#[Fillable(['first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'photo', 'status'])]
+#[Fillable(['first_name', 'middle_name', 'last_name', 'gender', 'date_of_birth', 'photo', 'status', 'admission_date', 'address', 'religion', 'medical_notes'])]
 class Student extends Model
 {
     /** @use HasFactory<StudentFactory> */
     use HasFactory;
+
+    protected $hidden = ['medical_notes'];
 
     protected function casts(): array
     {
         return [
             'gender' => Gender::class,
             'date_of_birth' => 'date',
+            'admission_date' => 'date',
+            'medical_notes' => 'encrypted',
             'status' => StudentStatus::class,
         ];
     }

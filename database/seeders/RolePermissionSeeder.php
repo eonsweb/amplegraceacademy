@@ -29,7 +29,7 @@ class RolePermissionSeeder extends Seeder
             ],
             Roles::HEADMASTER => [
                 Permissions::DASHBOARD_VIEW,
-                Permissions::STUDENTS_VIEW, Permissions::STUDENTS_CREATE, Permissions::STUDENTS_UPDATE,
+                Permissions::STUDENTS_VIEW, Permissions::STUDENTS_CREATE, Permissions::STUDENTS_UPDATE, Permissions::STUDENTS_IMPORT,
                 Permissions::GUARDIANS_VIEW, Permissions::GUARDIANS_CREATE, Permissions::GUARDIANS_UPDATE,
                 Permissions::GUARDIANS_LINK_STUDENT, Permissions::GUARDIANS_UNLINK_STUDENT,
                 Permissions::STAFF_VIEW, Permissions::STAFF_CREATE, Permissions::STAFF_UPDATE,

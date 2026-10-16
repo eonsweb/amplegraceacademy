@@ -39,6 +39,9 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
     Route::livewire('students/create', 'pages::students.create')
         ->middleware('permission:'.Permissions::STUDENTS_CREATE)
         ->name('students.create');
+    Route::livewire('students/import', 'pages::students.import')
+        ->middleware('permission:'.Permissions::STUDENTS_IMPORT)
+        ->name('students.import');
     Route::livewire('students/{student}', 'pages::students.show')
         ->middleware('permission:'.Permissions::STUDENTS_VIEW)
         ->name('students.show');
