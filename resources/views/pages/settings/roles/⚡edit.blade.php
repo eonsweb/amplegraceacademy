@@ -6,6 +6,7 @@ use App\Support\Authorization\Permissions;
 use App\Support\Authorization\Roles;
 use Flux\Flux;
 use Illuminate\Database\Query\Builder;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Computed;
@@ -70,6 +71,7 @@ new #[Title('Edit role')] class extends Component {
     public function save(AuthorizationSafety $safety): void
     {
         Gate::authorize(Permissions::ROLES_UPDATE);
+        abort_unless($this->role->guard_name === 'web', 404);
 
         $this->name = trim($this->name);
         $validated = $this->validate([
@@ -99,31 +101,33 @@ new #[Title('Edit role')] class extends Component {
             $safety->ensureAdministrativeAccessRemainsAfterRoleSync($this->role, $submittedPermissions);
         }
 
-        $oldName = $this->role->name;
-        $this->role->update(['name' => $validated['name']]);
+        DB::transaction(function () use ($validated, $permissionsChanged, $submittedPermissions, $currentPermissions): void {
+            $oldName = $this->role->name;
+            $this->role->update(['name' => $validated['name']]);
 
-        if ($permissionsChanged) {
-            $this->role->syncPermissions($submittedPermissions);
-        }
+            if ($permissionsChanged) {
+                $this->role->syncPermissions($submittedPermissions);
+            }
 
-        if ($oldName !== $this->role->name) {
-            AuthorizationChanged::dispatch('role.updated', auth()->id(), Role::class, $this->role->id, [
-                'old_name' => $oldName,
-                'name' => $this->role->name,
-            ]);
-        }
+            if ($oldName !== $this->role->name) {
+                AuthorizationChanged::dispatch('role.updated', auth()->id(), Role::class, $this->role->id, [
+                    'old_name' => $oldName,
+                    'name' => $this->role->name,
+                ]);
+            }
 
-        foreach (array_diff($submittedPermissions, $currentPermissions) as $permission) {
-            AuthorizationChanged::dispatch('role.permission_assigned', auth()->id(), Role::class, $this->role->id, [
-                'permission' => $permission,
-            ]);
-        }
+            foreach (array_diff($submittedPermissions, $currentPermissions) as $permission) {
+                AuthorizationChanged::dispatch('role.permission_assigned', auth()->id(), Role::class, $this->role->id, [
+                    'permission' => $permission,
+                ]);
+            }
 
-        foreach (array_diff($currentPermissions, $submittedPermissions) as $permission) {
-            AuthorizationChanged::dispatch('role.permission_removed', auth()->id(), Role::class, $this->role->id, [
-                'permission' => $permission,
-            ]);
-        }
+            foreach (array_diff($currentPermissions, $submittedPermissions) as $permission) {
+                AuthorizationChanged::dispatch('role.permission_removed', auth()->id(), Role::class, $this->role->id, [
+                    'permission' => $permission,
+                ]);
+            }
+        });
 
         Flux::toast(variant: 'success', text: 'Role updated.');
     }

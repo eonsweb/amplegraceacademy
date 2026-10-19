@@ -7,8 +7,11 @@ use App\Support\Authorization\Roles;
 use Database\Seeders\PermissionSeeder;
 use Database\Seeders\RolePermissionSeeder;
 use Database\Seeders\RoleSeeder;
+use Illuminate\Database\Events\QueryExecuted;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 function seedRoleManagementAuthorization(): void
@@ -35,7 +38,8 @@ test('privileged users can create custom roles', function () {
         ->call('createRole')
         ->assertHasNoErrors();
 
-    expect(Role::findByName('Accountant')->name)->toBe('Accountant');
+    expect(Role::findByName('Accountant')->name)->toBe('Accountant')
+        ->and(Role::findByName('Accountant')->permissions)->toBeEmpty();
     Event::assertDispatched(AuthorizationChanged::class, fn (AuthorizationChanged $event): bool => $event->action === 'role.created');
 });
 
@@ -135,4 +139,78 @@ test('the last authorization manager cannot remove critical role access', functi
         ->assertHasErrors(['authorization']);
 
     expect($adminRole->fresh()->hasPermissionTo(Permissions::PERMISSIONS_ASSIGN))->toBeTrue();
+});
+
+test('an existing Admin cannot self grant academic access until explicitly recovered by an operator', function () {
+    seedRoleManagementAuthorization();
+    $role = Role::findByName(Roles::ADMIN, 'web');
+    $role->revokePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
+    $actor = User::factory()->create();
+    $actor->assignRole($role);
+    $before = $role->permissions()->pluck('name')->all();
+
+    Livewire::actingAs($actor)->test('pages::settings.roles.edit', ['role' => $role])
+        ->call('selectModule', 'Academic Setup')->call('save')->assertHasErrors(['permissionNames'])
+        ->assertSee('You cannot grant a permission you do not hold: academic-setup.view.');
+
+    expect($role->fresh()->permissions->pluck('name')->all())->toEqualCanonicalizing($before);
+
+    $this->artisan('authorization:grant-academic-setup', ['username' => $actor->username])->assertSuccessful();
+
+    Livewire::actingAs($actor->fresh())->test('pages::settings.roles.edit', ['role' => $role->fresh()])
+        ->call('selectModule', 'Academic Setup')->call('save')->assertHasNoErrors();
+
+    expect($role->fresh()->permissions->pluck('name')->all())
+        ->toEqualCanonicalizing([...$before, Permissions::ACADEMIC_SETUP_VIEW]);
+});
+
+test('invalid permission guards leave the role name and existing permissions unchanged', function () {
+    seedRoleManagementAuthorization();
+    $actor = User::factory()->create();
+    $actor->assignRole(Roles::ADMIN);
+    $role = Role::create(['name' => 'Academic reader', 'guard_name' => 'web']);
+    $role->givePermissionTo(Permissions::CLASSES_VIEW);
+    Permission::create(['name' => 'api-only.view', 'guard_name' => 'api']);
+
+    Livewire::actingAs($actor)->test('pages::settings.roles.edit', ['role' => $role])
+        ->set('name', 'Changed name')->set('permissionNames', ['api-only.view'])
+        ->call('save')->assertHasErrors(['permissionNames.0']);
+
+    expect($role->fresh()->name)->toBe('Academic reader');
+    expect($role->fresh()->permissions->pluck('name')->all())->toBe([Permissions::CLASSES_VIEW]);
+});
+
+test('a forged role save without assignment permission cannot change existing assignments', function () {
+    seedRoleManagementAuthorization();
+    $actor = User::factory()->create();
+    $actor->givePermissionTo([Permissions::ROLES_VIEW, Permissions::ROLES_UPDATE, Permissions::ACADEMIC_SETUP_VIEW]);
+    $role = Role::create(['name' => 'Academic reader', 'guard_name' => 'web']);
+    $role->givePermissionTo(Permissions::CLASSES_VIEW);
+
+    Livewire::actingAs($actor)->test('pages::settings.roles.edit', ['role' => $role])
+        ->set('name', 'Changed name')->set('permissionNames', [Permissions::ACADEMIC_SETUP_VIEW])
+        ->call('save')->assertForbidden();
+
+    expect($role->fresh()->name)->toBe('Academic reader');
+    expect($role->fresh()->permissions->pluck('name')->all())->toBe([Permissions::CLASSES_VIEW]);
+});
+
+test('a failed permission insert rolls back both role renaming and detached permissions', function () {
+    seedRoleManagementAuthorization();
+    $actor = User::factory()->create();
+    $actor->assignRole(Roles::ADMIN);
+    $role = Role::create(['name' => 'Academic reader', 'guard_name' => 'web']);
+    $role->givePermissionTo(Permissions::CLASSES_VIEW);
+    $component = Livewire::actingAs($actor)->test('pages::settings.roles.edit', ['role' => $role])
+        ->set('name', 'Changed name')->set('permissionNames', [Permissions::ACADEMIC_SETUP_VIEW]);
+    DB::listen(function (QueryExecuted $query): void {
+        if (str_starts_with($query->sql, 'insert into `role_has_permissions`')) {
+            throw new RuntimeException('Simulated permission write failure');
+        }
+    });
+
+    expect(fn () => $component->call('save'))->toThrow(RuntimeException::class, 'Simulated permission write failure');
+
+    expect($role->fresh()->name)->toBe('Academic reader');
+    expect($role->fresh()->permissions->pluck('name')->all())->toBe([Permissions::CLASSES_VIEW]);
 });

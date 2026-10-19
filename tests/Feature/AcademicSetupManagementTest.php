@@ -21,6 +21,7 @@ beforeEach(function () {
 
 function academicUser(array $permissions): User
 {
+    $permissions[] = Permissions::ACADEMIC_SETUP_VIEW;
     foreach ($permissions as $permission) {
         Permission::findOrCreate($permission);
     }

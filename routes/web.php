@@ -76,7 +76,7 @@ Route::middleware(['auth', 'verified', 'password.changed'])->group(function () {
         ->name('staff.edit');
 });
 
-Route::middleware(['auth', 'verified', 'password.changed'])
+Route::middleware(['auth', 'verified', 'password.changed', 'permission:'.Permissions::ACADEMIC_SETUP_VIEW])
     ->prefix('academic')
     ->name('academic.')
     ->group(function () {
@@ -93,8 +93,8 @@ Route::middleware(['auth', 'verified', 'password.changed'])
                 return to_route('academic.subjects.index');
             }
 
-            abort(403);
-        })->middleware('permission:'.Permissions::CLASSES_VIEW.'|'.Permissions::SUBJECTS_VIEW)->name('index');
+            return view('pages.academic.index');
+        })->name('index');
 
         Route::livewire('years', 'pages::academic.years.index')
             ->middleware('permission:'.Permissions::CLASSES_VIEW)

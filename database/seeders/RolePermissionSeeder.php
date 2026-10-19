@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Support\Authorization\Permissions;
 use App\Support\Authorization\Roles;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
 class RolePermissionSeeder extends Seeder
@@ -14,9 +13,20 @@ class RolePermissionSeeder extends Seeder
     {
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
-        $mappings = [
+        $this->call(RoleSeeder::class);
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+    }
+
+    /** @return array<string, list<string>> */
+    public static function defaults(): array
+    {
+        return [
             Roles::ADMIN => Permissions::all(),
             Roles::PROPRIETOR => [
+                Permissions::ACADEMIC_SETUP_VIEW,
+                Permissions::CLASSES_CREATE, Permissions::CLASSES_UPDATE, Permissions::CLASSES_DELETE,
+                Permissions::SUBJECTS_CREATE, Permissions::SUBJECTS_UPDATE, Permissions::SUBJECTS_DELETE,
                 Permissions::DASHBOARD_VIEW, Permissions::STUDENTS_VIEW, Permissions::GUARDIANS_VIEW,
                 Permissions::STAFF_VIEW, Permissions::STAFF_CREATE, Permissions::STAFF_UPDATE,
                 Permissions::STAFF_DELETE, Permissions::STAFF_MANAGE_STATUS, Permissions::STAFF_MANAGE_USER_ACCOUNT,
@@ -28,6 +38,7 @@ class RolePermissionSeeder extends Seeder
                 ...Permissions::userManagement(),
             ],
             Roles::HEADMASTER => [
+                Permissions::ACADEMIC_SETUP_VIEW, Permissions::CLASSES_DELETE, Permissions::SUBJECTS_DELETE,
                 Permissions::DASHBOARD_VIEW,
                 Permissions::STUDENTS_VIEW, Permissions::STUDENTS_CREATE, Permissions::STUDENTS_UPDATE, Permissions::STUDENTS_IMPORT,
                 Permissions::GUARDIANS_VIEW, Permissions::GUARDIANS_CREATE, Permissions::GUARDIANS_UPDATE,
@@ -49,11 +60,5 @@ class RolePermissionSeeder extends Seeder
                 Permissions::ASSESSMENTS_CREATE, Permissions::ASSESSMENTS_UPDATE, Permissions::RESULTS_VIEW,
             ],
         ];
-
-        foreach ($mappings as $roleName => $permissions) {
-            Role::findByName($roleName, 'web')->syncPermissions($permissions);
-        }
-
-        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

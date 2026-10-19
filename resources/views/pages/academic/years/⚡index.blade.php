@@ -30,9 +30,15 @@ new #[Title('Academic Years')] class extends Component {
     public bool $isCurrent = false;
     public int $recordsPerPage = 25;
 
+    public function boot(): void
+    {
+        auth()->authenticate();
+        Gate::authorize(Permissions::ACADEMIC_SETUP_VIEW);
+        Gate::authorize(Permissions::CLASSES_VIEW);
+    }
+
     public function mount(SystemSettings $settings): void
     {
-        Gate::authorize(Permissions::CLASSES_VIEW);
         $this->recordsPerPage = $settings->recordsPerPage();
     }
 
@@ -137,5 +143,7 @@ new #[Title('Academic Years')] class extends Component {
             @if($this->years->hasPages())<div class="border-t border-zinc-200 p-4 dark:border-zinc-800">{{ $this->years->links() }}</div>@endif
         </x-app.panel>
     </div>
+    @canany([Permissions::CLASSES_CREATE, Permissions::CLASSES_UPDATE])
     <flux:modal wire:model.self="showForm" class="max-w-xl"><form wire:submit="save" class="grid gap-5"><flux:heading size="lg">{{ $editingId === null ? 'Create Academic Year' : 'Edit Academic Year' }}</flux:heading><flux:input wire:model="name" label="Academic Year" placeholder="2026/2027" description="Use the YYYY/YYYY format, with consecutive years." required /><flux:switch wire:model="isCurrent" label="Set as current" :disabled="$editingId !== null && $isCurrent" /><div class="flex justify-end gap-3"><flux:modal.close><flux:button variant="ghost">Cancel</flux:button></flux:modal.close><flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="save">{{ $editingId === null ? 'Create Academic Year' : 'Save Changes' }}</flux:button></div></form></flux:modal>
+    @endcanany
 </x-academic.layout>

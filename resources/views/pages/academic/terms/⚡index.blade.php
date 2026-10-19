@@ -16,9 +16,15 @@ new #[Title('Terms')] class extends Component {
     #[Url]
     public ?int $academicYearId = null;
 
+    public function boot(): void
+    {
+        auth()->authenticate();
+        Gate::authorize(Permissions::ACADEMIC_SETUP_VIEW);
+        Gate::authorize(Permissions::CLASSES_VIEW);
+    }
+
     public function mount(AcademicContext $context): void
     {
-        Gate::authorize(Permissions::CLASSES_VIEW);
         $this->academicYearId ??= $context->currentYearId() ?? AcademicYear::query()->orderByDesc('name')->value('id');
     }
 

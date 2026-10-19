@@ -25,7 +25,14 @@ new #[Title('Subjects')] class extends Component {
     public bool $isActive = true;
     public int $recordsPerPage = 25;
 
-    public function mount(SystemSettings $settings): void { Gate::authorize(Permissions::SUBJECTS_VIEW); $this->recordsPerPage = $settings->recordsPerPage(); }
+    public function boot(): void
+    {
+        auth()->authenticate();
+        Gate::authorize(Permissions::ACADEMIC_SETUP_VIEW);
+        Gate::authorize(Permissions::SUBJECTS_VIEW);
+    }
+
+    public function mount(SystemSettings $settings): void { $this->recordsPerPage = $settings->recordsPerPage(); }
     public function updatedSearch(): void { $this->resetPage(); }
     public function updatedStatus(): void { $this->resetPage(); }
     /** @return LengthAwarePaginator<int, Subject> */
@@ -57,5 +64,7 @@ new #[Title('Subjects')] class extends Component {
     <div class="grid gap-4"><div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_12rem_auto]"><flux:input wire:model.live.debounce.400ms="search" icon="magnifying-glass" placeholder="Search subject name or code..." /><flux:select wire:model.live="status" aria-label="Filter subjects by status"><flux:select.option value="">All statuses</flux:select.option><flux:select.option value="active">Active</flux:select.option><flux:select.option value="inactive">Inactive</flux:select.option></flux:select>@can(Permissions::SUBJECTS_CREATE)<flux:button variant="primary" icon="plus" wire:click="create">Create Subject</flux:button>@endcan</div>
         <x-app.panel title="Subjects"><div class="overflow-x-auto"><table class="w-full min-w-lg text-left text-sm"><thead class="border-b text-xs uppercase text-zinc-500"><tr><th class="px-4 py-3">Subject name</th><th class="px-4 py-3">Code</th><th class="px-4 py-3">Classes</th><th class="px-4 py-3">Status</th><th class="px-4 py-3 text-right">Actions</th></tr></thead><tbody class="divide-y dark:divide-zinc-800">@forelse($this->subjects as $subject)<tr wire:key="subject-{{ $subject->id }}"><td class="px-4 py-3 font-semibold">{{ $subject->name }}</td><td class="px-4 py-3">{{ $subject->code ?? '—' }}</td><td class="px-4 py-3">{{ $subject->class_subjects_count }}</td><td class="px-4 py-3"><flux:badge :color="$subject->is_active ? 'green' : 'zinc'">{{ $subject->is_active ? 'Active' : 'Inactive' }}</flux:badge></td><td class="px-4 py-3"><div class="flex justify-end gap-2">@can(Permissions::SUBJECTS_UPDATE)<flux:button size="sm" variant="ghost" wire:click="toggle({{ $subject->id }})" wire:confirm="{{ $subject->is_active ? 'Deactivate this subject? Existing assignments will remain.' : 'Activate this subject?' }}">{{ $subject->is_active ? 'Deactivate' : 'Activate' }}</flux:button><flux:button size="sm" variant="ghost" icon="pencil-square" wire:click="edit({{ $subject->id }})" />@endcan</div></td></tr>@empty<tr><td colspan="5"><x-academic.empty-state class="border-0" icon="building-library" heading="No subjects configured" description="Create subjects, then assign them directly to class levels." /></td></tr>@endforelse</tbody></table></div>@if($this->subjects->hasPages())<div class="border-t p-4">{{ $this->subjects->links() }}</div>@endif</x-app.panel>
     </div>
+    @canany([Permissions::SUBJECTS_CREATE, Permissions::SUBJECTS_UPDATE])
     <flux:modal wire:model.self="showForm" class="max-w-lg"><form wire:submit="save" class="grid gap-5"><flux:heading size="lg">{{ $editingId === null ? 'Create Subject' : 'Edit Subject' }}</flux:heading><flux:input wire:model="name" label="Subject name" required /><flux:input wire:model="code" label="Code (optional)" maxlength="30" /><flux:switch wire:model="isActive" label="Active" /><div class="flex justify-end gap-3"><flux:modal.close><flux:button variant="ghost">Cancel</flux:button></flux:modal.close><flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="save">Save</flux:button></div></form></flux:modal>
+    @endcanany
 </x-academic.layout>

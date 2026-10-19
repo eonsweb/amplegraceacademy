@@ -6,6 +6,8 @@ final class Permissions
 {
     public const DASHBOARD_VIEW = 'dashboard.view';
 
+    public const ACADEMIC_SETUP_VIEW = 'academic-setup.view';
+
     public const STUDENTS_VIEW = 'students.view';
 
     public const STUDENTS_CREATE = 'students.create';
@@ -155,6 +157,7 @@ final class Permissions
     {
         return [
             'Dashboard' => [self::DASHBOARD_VIEW => 'View dashboard'],
+            'Academic Setup' => [self::ACADEMIC_SETUP_VIEW => 'Access academic setup'],
             'Students' => [self::STUDENTS_VIEW => 'View students', self::STUDENTS_CREATE => 'Create students', self::STUDENTS_IMPORT => 'Import students', self::STUDENTS_UPDATE => 'Update students', self::STUDENTS_DELETE => 'Delete students'],
             'Guardians' => [self::GUARDIANS_VIEW => 'View guardians', self::GUARDIANS_CREATE => 'Create guardians', self::GUARDIANS_UPDATE => 'Update guardians', self::GUARDIANS_DELETE => 'Delete guardians', self::GUARDIANS_LINK_STUDENT => 'Link guardians to students', self::GUARDIANS_UNLINK_STUDENT => 'Unlink guardians from students'],
             'Staff' => [self::STAFF_VIEW => 'View staff', self::STAFF_CREATE => 'Create staff', self::STAFF_UPDATE => 'Update staff', self::STAFF_DELETE => 'Delete staff', self::STAFF_MANAGE_STATUS => 'Change staff status', self::STAFF_MANAGE_USER_ACCOUNT => 'Link staff user accounts'],

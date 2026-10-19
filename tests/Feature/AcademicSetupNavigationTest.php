@@ -19,7 +19,9 @@ test('users without academic permissions receive a forbidden response', function
 
 test('the academic entry route selects the first page the user may view', function (string $permission, string $destination) {
     Permission::findOrCreate($permission);
+    Permission::findOrCreate(Permissions::ACADEMIC_SETUP_VIEW);
     $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
     $user->givePermissionTo($permission);
 
     $this->actingAs($user)
@@ -33,7 +35,9 @@ test('the academic entry route selects the first page the user may view', functi
 test('each academic page renders the shared navigation and selected content', function (string $routeName, string $heading) {
     Permission::findOrCreate(Permissions::CLASSES_VIEW);
     Permission::findOrCreate(Permissions::SUBJECTS_VIEW);
+    Permission::findOrCreate(Permissions::ACADEMIC_SETUP_VIEW);
     $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
     $user->givePermissionTo([Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW]);
 
     $this->actingAs($user)
@@ -59,7 +63,9 @@ test('each academic page renders the shared navigation and selected content', fu
 
 test('academic pages enforce their domain view permission', function (string $grantedPermission, string $routeName) {
     Permission::findOrCreate($grantedPermission);
+    Permission::findOrCreate(Permissions::ACADEMIC_SETUP_VIEW);
     $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
     $user->givePermissionTo($grantedPermission);
 
     $this->actingAs($user)
@@ -72,7 +78,9 @@ test('academic pages enforce their domain view permission', function (string $gr
 
 test('the main sidebar keeps academic setup active throughout the module', function () {
     Permission::findOrCreate(Permissions::CLASSES_VIEW);
+    Permission::findOrCreate(Permissions::ACADEMIC_SETUP_VIEW);
     $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
     $user->givePermissionTo(Permissions::CLASSES_VIEW);
 
     $this->actingAs($user)
@@ -83,7 +91,9 @@ test('the main sidebar keeps academic setup active throughout the module', funct
 
 test('the removed class sections page is not routed', function () {
     Permission::findOrCreate(Permissions::CLASSES_VIEW);
+    Permission::findOrCreate(Permissions::ACADEMIC_SETUP_VIEW);
     $user = User::factory()->create();
+    $user->givePermissionTo(Permissions::ACADEMIC_SETUP_VIEW);
     $user->givePermissionTo(Permissions::CLASSES_VIEW);
 
     $this->actingAs($user)

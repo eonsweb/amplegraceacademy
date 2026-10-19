@@ -31,9 +31,15 @@ new #[Title('Class Subjects')] class extends Component {
     #[Url] public string $search = '';
     public int $recordsPerPage = 25;
 
+    public function boot(): void
+    {
+        auth()->authenticate();
+        Gate::authorize(Permissions::ACADEMIC_SETUP_VIEW);
+        abort_unless(Gate::any([Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW]), 403);
+    }
+
     public function mount(SystemSettings $settings, AcademicContext $context): void
     {
-        abort_unless(Gate::any([Permissions::CLASSES_VIEW, Permissions::SUBJECTS_VIEW]), 403);
         $this->recordsPerPage = $settings->recordsPerPage();
         $this->academicYearId ??= $context->currentYearId() ?? AcademicYear::query()->orderByDesc('name')->value('id');
         $this->classLevelId ??= ClassLevel::query()->where('is_active', true)->orderBy('level_order')->value('id');
@@ -124,7 +130,7 @@ new #[Title('Class Subjects')] class extends Component {
             @if($academicYearId && $classLevelId)
                 <div class="border-b border-zinc-200 p-4 dark:border-zinc-800"><flux:input wire:model.live.debounce.400ms="search" icon="magnifying-glass" placeholder="Search active subjects..." /></div>
                 <div wire:key="assignment-editor-{{ $academicYearId }}-{{ $classLevelId }}-{{ $this->subjects->currentPage() }}" x-data="{ assignments: @js($this->assignmentState) }">
-                    <div class="overflow-x-auto"><table class="w-full min-w-2xl text-left text-sm"><thead class="border-b text-xs uppercase text-zinc-500"><tr><th class="px-4 py-3">Assigned</th><th class="px-4 py-3">Subject</th><th class="px-4 py-3">Teacher (optional)</th></tr></thead><tbody class="divide-y dark:divide-zinc-800">@forelse($this->subjects as $subject)<tr wire:key="assignment-subject-{{ $subject->id }}"><td class="px-4 py-3"><input type="checkbox" x-model="assignments[{{ $subject->id }}].assigned" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600"></td><td class="px-4 py-3"><span class="font-semibold">{{ $subject->name }}</span>@if($subject->code)<span class="ml-2 text-xs text-zinc-500">{{ $subject->code }}</span>@endif</td><td class="px-4 py-3"><select x-model="assignments[{{ $subject->id }}].staff_id" x-bind:disabled="!assignments[{{ $subject->id }}].assigned" class="w-full rounded-lg border-zinc-300 bg-white text-sm disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900"><option value="">No teacher</option>@foreach($this->teachers as $teacher)<option value="{{ $teacher->id }}">{{ $teacher->name }}</option>@endforeach</select></td></tr>@empty<tr><td colspan="3"><x-academic.empty-state class="border-0" icon="check-circle" heading="No active subjects found" description="Create or activate subjects before assigning them." /></td></tr>@endforelse</tbody></table></div>
+                    <div class="overflow-x-auto"><table class="w-full min-w-2xl text-left text-sm"><thead class="border-b text-xs uppercase text-zinc-500"><tr><th class="px-4 py-3">Assigned</th><th class="px-4 py-3">Subject</th><th class="px-4 py-3">Teacher (optional)</th></tr></thead><tbody class="divide-y dark:divide-zinc-800">@forelse($this->subjects as $subject)<tr wire:key="assignment-subject-{{ $subject->id }}"><td class="px-4 py-3">@canany([Permissions::CLASSES_UPDATE, Permissions::SUBJECTS_UPDATE])<input type="checkbox" x-model="assignments[{{ $subject->id }}].assigned" class="size-4 rounded border-zinc-300 text-brand-700 focus:ring-brand-600">@else<span>{{ $subject->getAttribute('assignment_id') !== null ? 'Yes' : 'No' }}</span>@endcanany</td><td class="px-4 py-3"><span class="font-semibold">{{ $subject->name }}</span>@if($subject->code)<span class="ml-2 text-xs text-zinc-500">{{ $subject->code }}</span>@endif</td><td class="px-4 py-3">@canany([Permissions::CLASSES_UPDATE, Permissions::SUBJECTS_UPDATE])<select x-model="assignments[{{ $subject->id }}].staff_id" x-bind:disabled="!assignments[{{ $subject->id }}].assigned" class="w-full rounded-lg border-zinc-300 bg-white text-sm disabled:opacity-50 dark:border-zinc-700 dark:bg-zinc-900"><option value="">No teacher</option>@foreach($this->teachers as $teacher)<option value="{{ $teacher->id }}">{{ $teacher->name }}</option>@endforeach</select>@else<span>{{ $this->teachers->firstWhere('id', $subject->getAttribute('assigned_staff_id'))?->name ?? 'No teacher' }}</span>@endcanany</td></tr>@empty<tr><td colspan="3"><x-academic.empty-state class="border-0" icon="check-circle" heading="No active subjects found" description="Create or activate subjects before assigning them." /></td></tr>@endforelse</tbody></table></div>
                     <div class="flex flex-col gap-3 border-t border-zinc-200 p-4 sm:flex-row sm:items-center sm:justify-between dark:border-zinc-800"><div>@if($this->subjects->hasPages()){{ $this->subjects->links() }}@endif</div>@if(auth()->user()->canAny([Permissions::CLASSES_UPDATE, Permissions::SUBJECTS_UPDATE]))<flux:button variant="primary" x-on:click="$wire.saveAssignments(Object.values(assignments))" wire:loading.attr="disabled" wire:target="saveAssignments">Save assignments</flux:button>@endif</div>
                 </div>
             @else

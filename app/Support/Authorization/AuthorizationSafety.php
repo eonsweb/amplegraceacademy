@@ -39,7 +39,7 @@ final class AuthorizationSafety
 
         if ($unauthorized !== null) {
             throw ValidationException::withMessages([
-                'permissionNames' => 'You cannot grant a permission you do not hold.',
+                'permissionNames' => 'You cannot grant a permission you do not hold: '.$unauthorized.'. Ask an authorized permission manager or the system operator to grant you access first.',
             ]);
         }
     }
