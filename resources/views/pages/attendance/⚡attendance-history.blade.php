@@ -108,8 +108,8 @@ new #[Title('Attendance History')] class extends Component {
         <flux:select label="Class" wire:model.live="classLevelId"><option value="">All classes</option>@foreach($this->classes as $class)<option wire:key="history-class-{{ $class->id }}" value="{{ $class->id }}">{{ $class->name }}</option>@endforeach</flux:select>
         <flux:select label="Status" wire:model.live="statusFilter"><option value="">All statuses</option>@foreach(AttendanceStatus::cases() as $status)<option wire:key="history-status-{{ $status->value }}" value="{{ $status->value }}">{{ $status->label() }}</option>@endforeach</flux:select>
         <flux:input label="Student" wire:model.live.debounce.400ms="search" placeholder="Name or admission number" />
-        <flux:input label="From date" type="date" wire:model.live="dateFrom" />
-        <flux:input label="To date" type="date" wire:model.live="dateTo" />
+        <x-app.date-input label="From date" wire:model.live="dateFrom" />
+        <x-app.date-input label="To date" wire:model.live="dateTo" />
         <div class="flex items-end"><flux:button wire:click="resetFilters">Clear filters</flux:button></div>
     </div>
     <div wire:loading role="status" class="text-sm text-zinc-500">Loading history…</div>

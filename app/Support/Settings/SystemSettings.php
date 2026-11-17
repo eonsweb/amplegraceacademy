@@ -4,15 +4,40 @@ namespace App\Support\Settings;
 
 use App\Models\SchoolSetting;
 use DateTimeInterface;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
+use RuntimeException;
+use Throwable;
 
 final class SystemSettings
 {
-    public const CACHE_KEY = 'system.settings';
+    public const CACHE_KEY = 'system.settings.v2';
+
+    /** @var array<string, string> */
+    public const BRANDING_DEFAULTS = [
+        'dashboard_motto' => 'Shaping Futures, Transforming Lives',
+        'login_heading' => 'Welcome Back',
+        'login_message' => 'Sign in to your school management account.',
+        'copyright_company' => 'eonsweb solution',
+        'primary_color' => 'blue',
+    ];
+
+    /** @var list<string> */
+    public const ASSET_KEYS = ['dashboard_logo', 'login_logo', 'dark_logo', 'favicon'];
+
+    /** @var array<string, array<int, string>> */
+    public const PALETTES = [
+        'blue' => [50 => '#eff6ff', 100 => '#dbeafe', 200 => '#bfdbfe', 300 => '#93c5fd', 400 => '#60a5fa', 500 => '#3b82f6', 600 => '#2563eb', 700 => '#1d4ed8', 800 => '#1e40af', 900 => '#1e3a8a', 950 => '#172554'],
+        'green' => [50 => '#f0fdf4', 100 => '#dcfce7', 200 => '#bbf7d0', 300 => '#86efac', 400 => '#4ade80', 500 => '#22c55e', 600 => '#16a34a', 700 => '#15803d', 800 => '#166534', 900 => '#14532d', 950 => '#052e16'],
+        'red' => [50 => '#fef2f2', 100 => '#fee2e2', 200 => '#fecaca', 300 => '#fca5a5', 400 => '#f87171', 500 => '#ef4444', 600 => '#dc2626', 700 => '#b91c1c', 800 => '#991b1b', 900 => '#7f1d1d', 950 => '#450a0a'],
+        'purple' => [50 => '#faf5ff', 100 => '#f3e8ff', 200 => '#e9d5ff', 300 => '#d8b4fe', 400 => '#c084fc', 500 => '#a855f7', 600 => '#9333ea', 700 => '#7e22ce', 800 => '#6b21a8', 900 => '#581c87', 950 => '#3b0764'],
+        'orange' => [50 => '#fff7ed', 100 => '#ffedd5', 200 => '#fed7aa', 300 => '#fdba74', 400 => '#fb923c', 500 => '#f97316', 600 => '#ea580c', 700 => '#c2410c', 800 => '#9a3412', 900 => '#7c2d12', 950 => '#431407'],
+        'teal' => [50 => '#f0fdfa', 100 => '#ccfbf1', 200 => '#99f6e4', 300 => '#5eead4', 400 => '#2dd4bf', 500 => '#14b8a6', 600 => '#0d9488', 700 => '#0f766e', 800 => '#115e59', 900 => '#134e4a', 950 => '#042f2e'],
+    ];
 
     /** @var list<string> */
     public const DATE_FORMATS = ['DD/MM/YYYY', 'MM/DD/YYYY', 'YYYY-MM-DD'];
@@ -41,6 +66,12 @@ final class SystemSettings
         'dashboard_logo',
         'login_logo',
         'favicon',
+        'dark_logo',
+        'dashboard_motto',
+        'login_heading',
+        'login_message',
+        'copyright_company',
+        'primary_color',
         'currency_code',
         'date_format',
         'time_format',
@@ -99,9 +130,10 @@ final class SystemSettings
         }
 
         DB::transaction(function () use ($values): void {
-            $settings = SchoolSetting::query()->findOrNew(1);
+            $settings = SchoolSetting::query()->lockForUpdate()->findOrNew(1);
 
             if (! $settings->exists) {
+                $settings->id = 1;
                 $settings->school_name = (string) config('app.name', 'Ample Grace Academy');
             }
 
@@ -170,15 +202,132 @@ final class SystemSettings
         return $this->assetUrl('favicon') ?? asset('favicon.ico');
     }
 
+    public function darkLogoUrl(): string
+    {
+        return $this->assetUrl('dark_logo') ?? $this->dashboardLogoUrl();
+    }
+
+    public function brandingText(string $key): string
+    {
+        if (! array_key_exists($key, self::BRANDING_DEFAULTS)) {
+            throw new InvalidArgumentException('Unsupported branding setting.');
+        }
+
+        return (string) $this->get($key, self::BRANDING_DEFAULTS[$key]);
+    }
+
+    public function primaryColor(): string
+    {
+        $color = $this->brandingText('primary_color');
+
+        return isset(self::PALETTES[$color]) ? $color : 'blue';
+    }
+
+    public function copyright(): string
+    {
+        return '© '.now($this->timezone())->year.' '.$this->brandingText('copyright_company').'. All rights reserved.';
+    }
+
+    /**
+     * @param  array<string, mixed>  $values
+     * @param  array<string, UploadedFile|null>  $uploads
+     * @return list<string>
+     */
+    public function saveBranding(array $values, array $uploads = []): array
+    {
+        $newPaths = [];
+
+        try {
+            foreach ($uploads as $key => $upload) {
+                if (! in_array($key, self::ASSET_KEYS, true)) {
+                    throw new InvalidArgumentException('Unsupported branding asset key.');
+                }
+                if ($upload === null) {
+                    continue;
+                }
+                $path = $upload->store('branding', 'public');
+                if ($path === false) {
+                    throw new RuntimeException('Unable to store branding image.');
+                }
+                $newPaths[$key] = $path;
+                if (! Storage::disk('public')->exists($path)) {
+                    throw new RuntimeException('Stored branding image could not be verified.');
+                }
+            }
+
+            $oldPaths = [];
+            $changedKeys = DB::transaction(function () use ($values, $newPaths, &$oldPaths): array {
+                $current = SchoolSetting::query()->lockForUpdate()->find(1);
+                foreach (self::ASSET_KEYS as $key) {
+                    if (array_key_exists($key, $values + $newPaths)) {
+                        $oldPaths[] = $current?->getAttribute($key);
+                    }
+                }
+                $this->forget();
+
+                return $this->update(array_replace($values, $newPaths));
+            });
+        } catch (Throwable $exception) {
+            $this->forget();
+            foreach ($newPaths as $path) {
+                $this->deleteUnreferencedAsset($path);
+            }
+            throw $exception;
+        }
+
+        $this->forget();
+        DB::afterRollBack(function () use ($newPaths): void {
+            $this->forget();
+            foreach ($newPaths as $path) {
+                $this->deleteUnreferencedAsset($path);
+            }
+        });
+        DB::afterCommit(function () use ($oldPaths): void {
+            $this->forget();
+            foreach (array_unique($oldPaths) as $path) {
+                $this->deleteUnreferencedAsset($path);
+            }
+        });
+
+        return $changedKeys;
+    }
+
+    private function deleteUnreferencedAsset(?string $path): void
+    {
+        if ($path === null || ! $this->isSafeAssetPath($path)) {
+            return;
+        }
+
+        try {
+            $referenced = SchoolSetting::query()->where(function ($query) use ($path): void {
+                foreach (self::ASSET_KEYS as $key) {
+                    $query->orWhere($key, $path);
+                }
+            })->exists();
+
+            if (! $referenced && ! Storage::disk('public')->delete($path)) {
+                throw new RuntimeException('Unable to remove obsolete branding image.');
+            }
+            Cache::forget('branding.asset.'.hash('sha256', $path));
+        } catch (Throwable $exception) {
+            report($exception);
+        }
+    }
+
+    private function isSafeAssetPath(string $path): bool
+    {
+        return preg_match('/\Abranding\/[a-zA-Z0-9_-]+\.(?:png|jpe?g|webp|ico)\z/i', $path) === 1;
+    }
+
     public function assetPath(string $key): ?string
     {
-        if (! in_array($key, ['dashboard_logo', 'login_logo', 'favicon'], true)) {
+        if (! in_array($key, self::ASSET_KEYS, true)) {
             throw new InvalidArgumentException('Unsupported branding asset key.');
         }
 
         $path = $this->get($key);
 
-        return is_string($path) && str_starts_with($path, 'branding/') ? $path : null;
+        return is_string($path) && $this->isSafeAssetPath($path) ? $path : null;
     }
 
     public function formatMoney(int|float|string|null $amount): string
@@ -227,6 +376,8 @@ final class SystemSettings
     private function defaults(): array
     {
         return [
+            ...self::BRANDING_DEFAULTS,
+            'dark_logo' => null,
             'school_name' => (string) config('app.name', 'Ample Grace Academy'),
             'school_initials' => null,
             'contact_email' => null,
@@ -247,7 +398,14 @@ final class SystemSettings
     {
         $path = $this->assetPath($key);
 
-        return $path === null ? null : Storage::disk('public')->url($path);
+        if ($path === null) {
+            return null;
+        }
+
+        $exists = Cache::remember('branding.asset.'.hash('sha256', $path), 300,
+            fn (): bool => Storage::disk('public')->exists($path));
+
+        return $exists ? Storage::disk('public')->url($path) : null;
     }
 
     /** @param array{name: string, symbol: string, decimals: int, position: string} $currency */

@@ -1,6 +1,7 @@
 <x-layouts::auth :title="__('Log in')">
     <div class="flex flex-col gap-7">
-        <x-auth-header :title="__('Log in to your account')" :description="__('Enter your username and password below to log in')" />
+        @inject('systemSettings', 'App\Support\Settings\SystemSettings')
+        <x-auth-header :title="$systemSettings->brandingText('login_heading')" :description="$systemSettings->brandingText('login_message')" />
 
         <x-auth-session-status class="text-center" :status="session('status')" />
 
@@ -40,7 +41,7 @@
                 <flux:checkbox name="remember" :label="__('Remember me')" :checked="old('remember')" />
 
                 @if (Route::has('password.request'))
-                    <flux:link class="text-sm text-[#8a0824] hover:text-[#67061b]" :href="route('password.request')" wire:navigate>
+                    <flux:link class="text-sm" :href="route('password.request')" wire:navigate>
                         {{ __('Forgot your password?') }}
                     </flux:link>
                 @endif
@@ -49,7 +50,7 @@
             <flux:button
                 variant="primary"
                 type="submit"
-                class="w-full !bg-[#8a0824] !text-white hover:!bg-[#76071f] active:!bg-[#65051a] focus-visible:!ring-[#8a0824] disabled:cursor-not-allowed disabled:opacity-70"
+                class="w-full disabled:cursor-not-allowed disabled:opacity-70"
                 data-test="login-button"
                 x-bind:disabled="submitting"
                 x-bind:aria-busy="submitting"

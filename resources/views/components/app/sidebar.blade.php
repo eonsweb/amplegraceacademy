@@ -50,18 +50,9 @@
     aria-label="Primary navigation"
 >
     <div class="flex h-17 min-h-17 shrink-0 items-center gap-3 border-b border-white/10 px-4">
-        <img
-            src="{{ $systemSettings->dashboardLogoUrl() }}"
-            alt="{{ $systemSettings->schoolName() }} crest"
-            width="140"
-            height="150"
-            class="h-12 w-auto shrink-0 object-contain"
-        >
+        <x-app-logo-icon class="h-12 w-12 shrink-0 object-contain" />
         <div class="min-w-0 leading-tight">
-            <p class="whitespace-nowrap font-serif text-sm font-semibold tracking-wide text-white">SHAPING FUTURES</p>
-            <p class="mt-0.5 whitespace-nowrap font-serif text-[10px] tracking-wide text-white/70">
-                TRANSFORMING <span class="text-base italic text-white">Lives</span>
-            </p>
+            <p class="line-clamp-2 break-words font-serif text-sm font-semibold tracking-wide text-white">{{ $systemSettings->schoolName() }}</p>
         </div>
         <button
             type="button"
@@ -104,6 +95,6 @@
     </nav>
 
     <footer class="border-t border-white/10 px-6 py-5 text-center text-xs text-white/65">
-        &copy; {{ now()->year }} {{ $systemSettings->schoolName() }}
+        <p class="break-words">{{ $systemSettings->copyright() }}</p>
     </footer>
 </aside>

@@ -21,10 +21,10 @@
             return `${age} year${age === 1 ? '' : 's'}`
         },
     }"
-    x-on:input="if ($event.target.type === 'date') dateOfBirth = $event.target.value"
+    x-on:date-changed="dateOfBirth = $event.detail.value"
     {{ $attributes->class('grid gap-4 sm:grid-cols-2') }}
 >
-    <flux:input wire:model="{{ $model }}" type="date" label="Date of birth" />
+    <x-app.date-input wire:model="{{ $model }}" label="Date of birth" />
     <div class="grid content-start gap-2">
         <span class="text-sm font-medium text-zinc-800 dark:text-zinc-200">Age</span>
         <div class="flex min-h-10 items-center rounded-lg border border-zinc-200 bg-zinc-50 px-3 text-sm text-zinc-700 dark:border-zinc-700 dark:bg-zinc-800 dark:text-zinc-200" x-text="calculatedAge()"></div>

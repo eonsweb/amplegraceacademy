@@ -134,7 +134,8 @@
             </x-app.panel>
         </div>
         <footer class="py-3 text-center text-sm font-medium text-zinc-800 dark:text-zinc-200">
-            Shaping Futures, Transforming <span class="font-serif text-xl italic text-brand-700">Lives</span>
+            <p class="break-words">{{ $systemSettings->brandingText('dashboard_motto') }}</p>
+            <p class="mt-2 break-words text-xs">{{ $systemSettings->copyright() }}</p>
         </footer>
     </div>
 </x-layouts::app>

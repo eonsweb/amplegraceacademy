@@ -55,7 +55,7 @@ return $this->invoiceQuery()->when($this->status === 'void',fn($q)=>$q->whereNot
 @endforeach</flux:select>
 @can(Permissions::INVOICES_GENERATE)
 <x-app.panel title="Generate invoices"><div class="grid gap-4 p-5">
-<div class="grid gap-3 sm:grid-cols-3"><flux:input label="Issue date" type="date" wire:model="issueDate" /><flux:input label="Due date (optional)" type="date" wire:model="dueDate" /><div class="self-end"><flux:button wire:click="previewInvoices" wire:loading.attr="disabled">Preview invoices</flux:button></div></div>
+<div class="grid gap-3 sm:grid-cols-3"><x-app.date-input validate-actions="previewInvoices,generate" label="Issue date" wire:model="issueDate" /><x-app.date-input validate-actions="previewInvoices,generate" label="Due date (optional)" wire:model="dueDate" /><div class="self-end"><flux:button wire:click="previewInvoices" wire:loading.attr="disabled">Preview invoices</flux:button></div></div>
 <flux:error name="academic_year_id" /><flux:error name="term_id" /><flux:error name="class_level_id" /><flux:error name="issue_date" /><flux:error name="due_date" /><flux:error name="fees" />
 @if($preview)
 <div class="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700">

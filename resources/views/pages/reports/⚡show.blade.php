@@ -161,7 +161,11 @@ return new #[Title('School Report')] class extends Component {
                         </flux:select>
                     @endif
                 @else
-                    <flux:input :label="$label" :type="str_starts_with($field, 'date') ? 'date' : 'text'" wire:model="filters.{{ $field }}" />
+                    @if (str_starts_with($field, 'date'))
+                        <x-app.date-input :label="$label" wire:model="filters.{{ $field }}" />
+                    @else
+                        <flux:input :label="$label" type="text" wire:model="filters.{{ $field }}" />
+                    @endif
                 @endif
             </div>
         @endforeach

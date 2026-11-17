@@ -130,7 +130,7 @@ return new #[Title('Record Expense')] class extends Component {
         <x-app.panel title="Expense details">
             <form wire:submit="save" class="grid gap-5 p-5">
                 <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-                    <flux:input label="Expense date" type="date" wire:model="form.expense_date" required />
+                    <x-app.date-input label="Expense date" wire:model="form.expense_date" required />
                     <flux:select label="Category" wire:model="form.expense_category_id" required>
                         <option value="">Select category</option>
                         @foreach ($this->categories as $category)<option wire:key="entry-category-{{ $category->id }}" value="{{ $category->id }}">{{ $category->name }}</option>@endforeach

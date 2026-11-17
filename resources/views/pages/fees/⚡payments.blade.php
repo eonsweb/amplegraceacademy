@@ -44,7 +44,7 @@ $this->showVoid=false; unset($this->payments); \Flux\Flux::toast(variant:'succes
 ?>
 <x-fees.layout heading="Payment History" subheading="Valid and voided receipts remain visible for audit history.">
 <x-fees.filters />
-<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><flux:input label="Student or receipt" wire:model.live.debounce.400ms="search" placeholder="Name, admission or receipt number" /><flux:input label="From date" type="date" wire:model.live="dateFrom" /><flux:input label="To date" type="date" wire:model.live="dateTo" /><flux:select label="Method" wire:model.live="method"><option value="">All methods</option>
+<div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><flux:input label="Student or receipt" wire:model.live.debounce.400ms="search" placeholder="Name, admission or receipt number" /><x-app.date-input label="From date" wire:model.live="dateFrom" /><x-app.date-input label="To date" wire:model.live="dateTo" /><flux:select label="Method" wire:model.live="method"><option value="">All methods</option>
 @foreach(\App\PaymentMethod::cases() as $value)<option value="{{ $value->value }}">{{ $value->label() }}</option>
 @endforeach</flux:select></div>
 <x-app.panel title="Payments"><x-fees.payment-table :payments="$this->payments" /></x-app.panel>

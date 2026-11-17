@@ -268,7 +268,7 @@ new #[Title('Import Students')] class extends Component
         <x-app.panel title="1. Upload and validate">
             <form wire:submit="validateAndPreview" class="grid gap-4 p-5">
                 <flux:input type="file" wire:model="workbook" accept=".xlsx" label="Excel workbook" description="Use your existing enhanced workbook or download a blank template. Maximum 5 MB, 1,000 data rows and 20 MB expanded content." />
-                <flux:input type="date" wire:model="enrollmentDate" label="Enrollment date for the placements in this file" description="Enter the actual placement date for the academic year in the spreadsheet. This is separate from each student's original admission date. For different placement dates, use separate uploads." required />
+                <x-app.date-input wire:model="enrollmentDate" label="Enrollment date for the placements in this file" description="Enter the actual placement date for the academic year in the spreadsheet. This is separate from each student's original admission date. For different placement dates, use separate uploads." required />
                 <flux:text>Dates may be Excel dates, YYYY-MM-DD or DD/MM/YYYY. Keep phone numbers as text where possible. Formula admission numbers need a reliable saved Excel result; formulas are never executed.</flux:text>
                 <div class="flex flex-wrap gap-3"><flux:button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="validateAndPreview,workbook">Validate and preview</flux:button><flux:button type="button" wire:click="template">Download blank template</flux:button></div>
                 <p wire:loading wire:target="workbook,validateAndPreview" role="status" class="text-sm">Uploading and validating. No student records are being created.</p>
@@ -334,7 +334,7 @@ new #[Title('Import Students')] class extends Component
                 @endif
             @endif
             <flux:text>Changes apply only to this private preview. Dates use YYYY-MM-DD. Guardian 1 is primary when provided; otherwise the complete Guardian 2 is primary. Remove all optional second-guardian values to omit that guardian.</flux:text>
-            <div class="grid gap-3 md:grid-cols-2">@foreach(StudentImportReader::HEADERS as $index => $header)<flux:input wire:model="fields.{{ $index }}" :label="$header" :type="in_array($header, ['Date of Birth', 'Admission Date'], true) ? 'date' : 'text'" />@endforeach</div>
+            <div class="grid gap-3 md:grid-cols-2">@foreach(StudentImportReader::HEADERS as $index => $header)@if (in_array($header, ['Date of Birth', 'Admission Date'], true))<x-app.date-input validate-actions="requestNumberGeneration" wire:key="import-date-{{ $index }}" wire:model="fields.{{ $index }}" :label="$header" />@else<flux:input wire:model="fields.{{ $index }}" :label="$header" type="text" />@endif@endforeach</div>
             <flux:text>Keep the existing admission number when correcting guardians or optional details. To correct a typo, edit Admission Number above. Numbers are never generated just by saving corrections.</flux:text>
             @if($showEditor && $this->editingRecord?->status !== 'exists')
                 <details class="rounded-lg border border-zinc-200 p-4 dark:border-zinc-700" @if($generateNumber) open @endif>

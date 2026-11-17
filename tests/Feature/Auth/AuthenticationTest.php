@@ -9,8 +9,8 @@ test('the public homepage displays the username login form', function () {
 
     $response
         ->assertOk()
-        ->assertSee('Log in to your account')
-        ->assertSee('Enter your username and password below to log in')
+        ->assertSee('Welcome Back')
+        ->assertSee('Sign in to your school management account.')
         ->assertSee('name="username"', false)
         ->assertSee('autocomplete="username"', false)
         ->assertDontSee('name="email"', false)

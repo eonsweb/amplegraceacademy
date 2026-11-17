@@ -10,10 +10,12 @@
                 <a href="{{ route('home') }}" class="mb-7 flex justify-center" aria-label="{{ $systemSettings->schoolName() }} home" wire:navigate>
                     <img
                         src="{{ $systemSettings->loginLogoUrl() }}"
+                        onerror="this.onerror=null;this.src='{{ asset('images/branding/ample-grace-logo.png') }}'"
                         alt="{{ $systemSettings->schoolName() }}"
                         width="140"
                         height="145"
-                        class="h-28 w-auto object-contain"
+                        fetchpriority="high"
+                        class="h-28 w-full object-contain"
                     >
                 </a>
 

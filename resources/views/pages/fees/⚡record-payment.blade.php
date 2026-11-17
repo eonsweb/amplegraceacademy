@@ -70,7 +70,7 @@ $this->savedPaymentId=$payment->id; unset($this->invoices); \Flux\Flux::toast(va
 @endforelse
 </tbody></table></div>{{ $this->invoices->links() }}
 <flux:error name="student_id" /><flux:error name="invoice_id" />
-<div class="grid gap-4 sm:grid-cols-3"><flux:input label="Amount" type="number" min="0.01" step="0.01" wire:model="amount" required /><flux:input label="Payment date" type="date" wire:model="paymentDate" required /><flux:select label="Payment method" wire:model="paymentMethod">
+<div class="grid gap-4 sm:grid-cols-3"><flux:input label="Amount" type="number" min="0.01" step="0.01" wire:model="amount" required /><x-app.date-input label="Payment date" wire:model="paymentDate" required /><flux:select label="Payment method" wire:model="paymentMethod">
 @foreach(\App\PaymentMethod::cases() as $method)<option value="{{ $method->value }}">{{ $method->label() }}</option>
 @endforeach</flux:select></div>
 <flux:error name="payment_date" /><flux:error name="payment_method" />

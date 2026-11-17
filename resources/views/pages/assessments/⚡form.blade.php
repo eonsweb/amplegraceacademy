@@ -73,7 +73,7 @@ new #[Title('Assessment Setup')] class extends Component {
         <flux:input label="Assessment name" wire:model="form.name" maxlength="150" required />
         <flux:select label="Type" wire:model="form.type">@foreach(AssessmentType::cases() as $type)<option wire:key="type-{{ $type->value }}" value="{{ $type->value }}">{{ $type->label() }}</option>@endforeach</flux:select>
         <flux:input label="Maximum score" type="number" min="0.01" max="999999.99" step="0.01" wire:model="form.maximum_score" required />
-        <flux:input label="Assessment date (optional)" type="date" wire:model="form.assessment_date" />
+        <x-app.date-input label="Assessment date (optional)" wire:model="form.assessment_date" />
         <flux:select label="Status" wire:model="form.status">@foreach(AssessmentStatus::cases() as $status)<option wire:key="state-{{ $status->value }}" value="{{ $status->value }}">{{ $status->label() }}</option>@endforeach</flux:select>
         <div class="flex items-end"><flux:button type="submit" variant="primary" wire:loading.attr="disabled">Save Assessment</flux:button></div>
     </form>

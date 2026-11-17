@@ -7,6 +7,6 @@
         <option value="">All terms</option>
         @foreach ($this->terms as $term)<option wire:key="filter-term-{{ $term->id }}" value="{{ $term->id }}">{{ $term->name }}</option>@endforeach
     </flux:select>
-    <flux:input label="From date" type="date" wire:model.live="dateFrom" />
-    <flux:input label="To date" type="date" wire:model.live="dateTo" />
+    <x-app.date-input label="From date" wire:model.live="dateFrom" />
+    <x-app.date-input label="To date" wire:model.live="dateTo" />
 </div>

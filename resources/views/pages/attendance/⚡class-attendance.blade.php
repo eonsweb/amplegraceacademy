@@ -124,7 +124,7 @@ new #[Title('Class Attendance')] class extends Component {
         <flux:select label="Academic Year" wire:model.live="academicYearId"><option value="">Select year</option>@foreach($this->years as $year)<option wire:key="year-{{ $year->id }}" value="{{ $year->id }}">{{ $year->name }}</option>@endforeach</flux:select>
         <flux:select label="Term" wire:model.live="termId"><option value="">Select term</option>@foreach($this->terms as $term)<option wire:key="term-{{ $term->id }}" value="{{ $term->id }}">{{ $term->name }}</option>@endforeach</flux:select>
         <flux:select label="Class" wire:model.live="classLevelId"><option value="">Select class</option>@foreach($this->classes as $class)<option wire:key="class-{{ $class->id }}" value="{{ $class->id }}">{{ $class->name }}</option>@endforeach</flux:select>
-        <flux:input label="Date" type="date" wire:model.live="attendanceDate" :max="today()->toDateString()" />
+        <x-app.date-input validate-actions="save,loadRoster" label="Date" wire:model.live="attendanceDate" :max="today()->toDateString()" />
     </div>
     @if($errors->any())<div role="alert" class="rounded-lg border border-red-300 p-3 text-red-700 dark:text-red-300">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
     @if($message)<flux:callout variant="success" role="status">{{ $message }}</flux:callout>@endif

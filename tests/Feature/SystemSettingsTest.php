@@ -72,6 +72,9 @@ test('school initials reject admission number separators', function () {
 });
 
 test('branding resolves custom and fallback assets in order', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('branding/dashboard.webp', 'image');
+    Storage::disk('public')->put('branding/favicon.png', 'image');
     Cache::forget(SystemSettings::CACHE_KEY);
     SchoolSetting::factory()->create([
         'id' => 1,
@@ -93,6 +96,8 @@ test('branding resolves custom and fallback assets in order', function () {
 });
 
 test('a custom login logo takes priority over the dashboard logo', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('branding/login.webp', 'image');
     SchoolSetting::factory()->create([
         'id' => 1,
         'dashboard_logo' => 'branding/dashboard.webp',
